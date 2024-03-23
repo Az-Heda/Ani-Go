@@ -1,0 +1,11 @@
+tmp/
+temp/
+
+db-integration/migration/
+db-integration/data/
+
+*.exe
+*.sqlite3
+*.db
+
+go.sum
