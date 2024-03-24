@@ -6,6 +6,14 @@ import (
 
 func Init(eng *gin.Engine) {
 	api := eng.Group("/api")
-
-	api.GET("/anime/:id", getAnimeFromID)
+	SetGenreEndpoints(api)
+	SetStudioEndpoints(api)
+	SetTypeEndpoints(api)
+	SetStatusEndpoints(api)
+	SetSeasonEndpoints(api)
+	SetImageEndpoints(api)
+	SetEpisodeEndpoints(api)
+	SetDescriptionEndpoints(api)
+	SetCharacterEndpoints(api)
+	SetAnimeEndpoints(api)
 }

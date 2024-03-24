@@ -1,9 +1,10 @@
 package api
 
 import (
-	dbintegration "AniGo/db-integration"
 	"log"
 	"net/http"
+
+	db "AniGo/db"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -27,17 +28,27 @@ WHERE a.Id = ?
 func getAnimeFromID(c *gin.Context) {
 	var animeID string = c.Param("id")
 
-	db, err := sqlx.Connect("sqlite", dbintegration.DatabaseName)
+	conn, err := sqlx.Connect("sqlite", db.DatabaseName)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	var data []anime
 
-	err = db.Select(&data, animeQuery, animeID)
+	rows, err := conn.Query(animeQuery, animeID)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	for rows.Next() {
+		var d anime
+		if err = rows.Scan(&d.Id, &d.Title, &d.AlternativeTitle, &d.Aired, &d.Duration, &d.CurrentStatus, &d.Season, &d.Type); err != nil {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+		data = append(data, d)
+	}
+
 	c.JSON(http.StatusOK, data)
 }
