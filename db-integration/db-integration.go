@@ -5,12 +5,11 @@ import (
 	"log"
 	"os"
 
+	db "AniGo/db"
+
 	"github.com/jmoiron/sqlx"
 	_ "modernc.org/sqlite"
 )
-
-var DatabaseName string = "db/db-test.sqlite3"
-var DatabaseInitializer string = "db/db-setup.sql"
 
 func nullString(s string) sql.NullString {
 	if len(s) == 0 {
@@ -23,40 +22,40 @@ func nullString(s string) sql.NullString {
 }
 
 func Init() {
-	os.Remove(DatabaseName)
-	db, err := sqlx.Connect("sqlite", DatabaseName)
+	os.Remove(db.DatabaseName)
+	conn, err := sqlx.Connect(db.DatabaseDriver, db.DatabaseName)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	content, err := os.ReadFile(DatabaseInitializer)
+	content, err := os.ReadFile(db.DatabaseInitializer)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	var queryInitializer string = string(content)
-	db.MustExec(queryInitializer)
+	conn.MustExec(queryInitializer)
 
-	insertGenres(db)
-	insertType(db)
-	insertStudios(db)
-	insertStatuses(db)
-	insertSeasons(db)
-	insertImages(db)
-	insertCharacters(db)
-	insertDescriptions(db)
-	insertAnime(db)
-	insertEpisode(db)
+	insertGenres(conn)
+	insertType(conn)
+	insertStudios(conn)
+	insertStatuses(conn)
+	insertSeasons(conn)
+	insertImages(conn)
+	insertCharacters(conn)
+	insertDescriptions(conn)
+	insertAnime(conn)
+	insertEpisode(conn)
 
-	insertJoinAnimeCharacters(db)
-	insertJoinAnimeDescriptions(db)
-	insertJoinAnimeGenres(db)
-	insertJoinAnimeImages(db)
-	insertJoinAnimeStudios(db)
-	insertJoinCharacterDescriptions(db)
-	insertJoinCharacterImages(db)
-	insertJoinEpisodeDescriptions(db)
+	insertJoinAnimeCharacters(conn)
+	insertJoinAnimeDescriptions(conn)
+	insertJoinAnimeGenres(conn)
+	insertJoinAnimeImages(conn)
+	insertJoinAnimeStudios(conn)
+	insertJoinCharacterDescriptions(conn)
+	insertJoinCharacterImages(conn)
+	insertJoinEpisodeDescriptions(conn)
 
-	db.Close()
+	conn.Close()
 }
 
 // https://jmoiron.github.io/sqlx/
