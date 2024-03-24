@@ -2,9 +2,9 @@ package router
 
 import (
 	"fmt"
-	"net/http"
 
 	api "AniGo/router/api"
+	pages "AniGo/router/pages"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,12 +19,7 @@ func Init() {
 	router.LoadHTMLGlob("templates/**/*.html")
 
 	api.Init(router)
-
-	router.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title": "Homepage",
-		})
-	})
+	pages.Init(router)
 
 	fmt.Println("Online at ", "http://"+URL)
 	router.Run(URL)
