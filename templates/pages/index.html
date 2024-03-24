@@ -5,5 +5,32 @@
 	</head>
 	<body class="min-h-screen">
 		Body
+
+		<table>
+			{{ range $anime := $.anime }}
+				<tr>
+					<td>
+						{{ if $anime.AlternativeTitle.Valid }}
+							{{ $anime.AlternativeTitle.String }}
+						{{ end }}
+					</td>
+					<td>{{ $anime.Title }}</td>
+					<td convertDate>
+						{{ $anime.Aired }}
+					</td>
+					<td>
+						<a href="{{ $anime.Url }}">MyAnimeList</a>
+					</td>
+				</tr>
+			{{ end }}
+		</table>
+		<script>
+			(() => {
+				const elements = document.querySelectorAll('[convertDate]');
+				for (const e of elements) {
+					e.innerHTML = new Date(+e.innerHTML).toISOString().split('T').at(0);
+				}
+			})()
+		</script>
 	</body>	
 </html>
