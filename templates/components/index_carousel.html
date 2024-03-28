@@ -1,0 +1,49 @@
+{{ define "components/index_carousel" }}
+<div class="flex flex-row flex-wrap justify-evenly *:m-5">
+
+
+	<div id="indicators-carousel" class="relative w-[300px] min-h-[400px]" data-carousel="slide">
+		<h2 class="w-full text-center text-xl">Watched</h2>
+		<div class="relative h-full overflow-hidden rounded-lg">
+			 {{ range $key, $img := $.randomImages_0 }}
+			 <div class=" hidden duration-700 ease-in-out" data-carousel-item{{ if eq $key 0 }}="active" {{ end }}>
+				<img src="{{ $img }}" class="absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 aspect-[3/4]" alt="...">
+			</div>
+			{{ end }}
+		</div>
+	</div>
+
+	<div id="indicators-carousel" class="relative w-[300px] min-h-[400px]" data-carousel="slide">
+		<h2 class="w-full text-center text-xl">Waiting for the next episode</h2>
+		<div class="relative h-full overflow-hidden rounded-lg">
+			 {{ range $key, $img := $.randomImages_1 }}
+			 <div class=" hidden duration-700 ease-in-out" data-carousel-item{{ if eq $key 0 }}="active" {{ end }}>
+				<img src="{{ $img }}" class="absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 aspect-[3/4]" alt="...">
+			</div>
+			{{ end }}
+		</div>
+	</div>
+
+	<div id="indicators-carousel" class="relative w-[300px] min-h-[400px]" data-carousel="slide">
+		<h2 class="w-full text-center text-xl">Started</h2>
+		<div class="relative h-full overflow-hidden rounded-lg">
+			 {{ range $key, $img := $.randomImages_2 }}
+			 <div class=" hidden duration-700 ease-in-out" data-carousel-item{{ if eq $key 0 }}="active" {{ end }}>
+				<img src="{{ $img }}" class="absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 aspect-[3/4]" alt="...">
+			</div>
+			{{ end }}
+		</div>
+	</div>
+
+	<div id="indicators-carousel" class="relative w-[300px] min-h-[400px]" data-carousel="slide">
+		<h2 class="w-full text-center text-xl">Will watch</h2>
+		<div class="relative h-full overflow-hidden rounded-lg">
+			 {{ range $key, $img := $.randomImages_3 }}
+			 <div class=" hidden duration-700 ease-in-out" data-carousel-item{{ if eq $key 0 }}="active" {{ end }}>
+				<img src="{{ $img }}" class="absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 aspect-[3/4]" alt="...">
+			</div>
+			{{ end }}
+		</div>
+	</div>
+</div>
+{{ end }}
