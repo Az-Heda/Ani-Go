@@ -1,4 +1,4 @@
-# Ani-Go
+# Ani-Go \[BETA\]
 
 Webserver in Golang for a website dedicated to Anime
 
