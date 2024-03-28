@@ -42,3 +42,13 @@ func SelectImageFromId(id string) (DB_Image, error) {
 	}
 	return data, nil
 }
+
+func SelectRandomNImages(n int64, status int64) ([]string, error) {
+	conn, err := GetConnection()
+	if err != nil {
+		return nil, err
+	}
+	var data []string
+	conn.Select(&data, "SELECT i.Url FROM Anime a LEFT JOIN Anime_Images ai ON ai.Anime_ID = a.Id LEFT JOIN Images i ON ai.Image_ID = i.Id WHERE a.CurrentStatus = ? ORDER BY RANDOM() LIMIT ?", status, n)
+	return data, nil
+}

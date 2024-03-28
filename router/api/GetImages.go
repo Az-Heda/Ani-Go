@@ -3,6 +3,7 @@ package api
 import (
 	"AniGo/db"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,6 +13,7 @@ func SetImageEndpoints(g *gin.RouterGroup) {
 
 	r.GET("/all", serveImageAll)
 	r.GET("/id/:id", serveImageWithId)
+	r.GET("/random/:n", serveRandomAnimeImage)
 }
 
 func serveImageAll(c *gin.Context) {
@@ -31,4 +33,19 @@ func serveImageWithId(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, data)
+}
+
+func serveRandomAnimeImage(c *gin.Context) {
+	n, err := strconv.ParseInt(c.Param("n"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	images, err := db.SelectRandomNImages(n, -1)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	c.JSON(http.StatusOK, images)
+
 }

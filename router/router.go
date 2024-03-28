@@ -18,6 +18,8 @@ func Init() {
 	router := gin.Default()
 	router.LoadHTMLGlob("templates/**/*.html")
 
+	router.Static("/static", "./static")
+
 	api.Init(router)
 	pages.Init(router)
 
