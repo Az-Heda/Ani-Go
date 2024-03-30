@@ -11,7 +11,7 @@ func SelectAllStatuses() ([]DB_Status, error) {
 		return nil, err
 	}
 	var data []DB_Status
-	rows, err := conn.Query("SELECT Id, Name FROM Statuses ORDER BY Name ASC")
+	rows, err := conn.Query("SELECT Id, Name FROM Statuses ORDER BY Id ASC")
 	if err != nil {
 		return data, err
 	}
