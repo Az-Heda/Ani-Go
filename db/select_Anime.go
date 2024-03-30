@@ -12,6 +12,8 @@ type DB_Anime struct {
 	CurrentStatus    int
 	Season_ID        sql.NullString
 	Type_ID          sql.NullString
+	Image            sql.NullString
+	Description      sql.NullString
 }
 
 func SelectAllAnime() ([]DB_Anime, error) {
@@ -20,14 +22,13 @@ func SelectAllAnime() ([]DB_Anime, error) {
 		return nil, err
 	}
 	var data []DB_Anime
-	rows, err := conn.Query("SELECT Id, Title, AlternativeTitle, Aired, Duration, Url, CurrentStatus, Season_ID, Type_ID FROM Anime ORDER BY CASE WHEN AlternativeTitle IS NOT NULL THEN AlternativeTitle ELSE Title END")
+	rows, err := conn.Query("SELECT a.Id, a.Title, a.AlternativeTitle, a.Aired, a.Duration, a.Url, a.CurrentStatus, a.Season_ID, a.Type_ID, (SELECT i.Url FROM Images i LEFT JOIN Anime_Images ai ON ai.Image_ID = i.Id WHERE ai.Anime_ID = a.Id LIMIT 1) as Image, (SELECT GROUP_CONCAT(d.Description, '\n') FROM Descriptions d LEFT JOIN Anime_Descriptions ad ON ad.Description_ID = d.Id WHERE ad.Anime_ID = a.Id) as Description FROM Anime a GROUP BY a.Id ORDER BY CASE WHEN AlternativeTitle IS NOT NULL THEN AlternativeTitle ELSE Title END")
 	if err != nil {
-		panic(err)
 		return data, err
 	}
 	for rows.Next() {
 		var d DB_Anime
-		if err = rows.Scan(&d.Id, &d.Title, &d.AlternativeTitle, &d.Aired, &d.Duration, &d.Url, &d.CurrentStatus, &d.Season_ID, &d.Type_ID); err != nil {
+		if err = rows.Scan(&d.Id, &d.Title, &d.AlternativeTitle, &d.Aired, &d.Duration, &d.Url, &d.CurrentStatus, &d.Season_ID, &d.Type_ID, &d.Image, &d.Description); err != nil {
 			return data, err
 		}
 		data = append(data, d)
