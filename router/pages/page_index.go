@@ -27,7 +27,7 @@ func serveIndex(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"title":          "Homepage",
 		"anime":          allAnime,
-		"menu":           []string{"Home", "Anime", "Characters", "Dashboard"},
+		"menu":           navbar,
 		"activeMenuItem": "Home",
 		"randomImages_0": imageHandler(n, 0),
 		"randomImages_1": imageHandler(n, 1),
