@@ -1,12 +1,14 @@
-{{ define "components/anime_cards" }}
+{{ define "components/anime_list_cards" }}
 <div class="flex flex-wrap justify-center items-stretched gap-10 mt-10">
 	{{ range $idx, $anime := $.animeList }}
 	<div class="w-72 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col justify-stretch transition-all duration-1000"
 		data-title="{{ if $anime.AlternativeTitle.Valid }} {{ $anime.AlternativeTitle.String }} {{else}} {{ $anime.Title }} {{ end }}"
 		data-animeidx="{{ $idx }}">
 		{{ if $anime.Image.Valid }}
-		<img class="rounded-t-lg w-[300px] max-h-[400px]" src="{{ $anime.Image.String }}" alt="" loading="lazy"
-			fetchPriority="low" />
+		<a href="/anime/{{ $anime.id }}">
+			<img class="rounded-t-lg w-[300px] max-h-[400px]" src="{{ $anime.Image.String }}" alt="" loading="lazy"
+				fetchPriority="low" />
+		</a>
 		{{ end }}
 		<div class="p-5 h-full flex flex-col justify-between">
 			<h5 class="mb-2 text-xl font-bold text-gray-900 dark:text-white">
