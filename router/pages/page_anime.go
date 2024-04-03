@@ -1,32 +1,24 @@
 package pages
 
 import (
+	"AniGo/db"
 	"net/http"
-
-	db "AniGo/db"
 
 	"github.com/gin-gonic/gin"
 )
 
 func serveAnime(c *gin.Context) {
+	var animeID string = c.Param("id")
 
-	allAnime, err := db.SelectAllAnime()
+	anime, err := db.SelectAnimeFromId(animeID)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	allStatus, err := db.SelectAllStatuses()
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
+		panic(err)
 	}
 
 	c.HTML(http.StatusOK, "anime.html", gin.H{
-		"title":          "Anime list",
+		"title":          "Anime",
 		"menu":           navbar,
-		"activeMenuItem": "Anime",
-		"animeList":      allAnime,
-		"statusList":     allStatus,
+		"activeMenuItem": "Anime list",
+		"anime":          anime,
 	})
 }
