@@ -1,4 +1,4 @@
 clear
 cd "$(dirname "$0")"
 
-go run Ani.go
+go build -o AniGo.exe Ani.go
