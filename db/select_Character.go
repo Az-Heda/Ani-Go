@@ -1,8 +1,11 @@
 package db
 
+import "database/sql"
+
 type DB_Character struct {
-	Id   string
-	Name string
+	Id    string
+	Name  string
+	Image sql.NullString
 }
 
 func SelectAllCharacters() ([]DB_Character, error) {
@@ -11,13 +14,13 @@ func SelectAllCharacters() ([]DB_Character, error) {
 		return nil, err
 	}
 	var data []DB_Character
-	rows, err := conn.Query("SELECT Id, Name FROM Character ORDER BY Name ASC")
+	rows, err := conn.Query("SELECT c.Id, c.Name, (SELECT i.Url FROM Images i LEFT JOIN Character_Images ci ON ci.Image_ID = i.Id WHERE ci.Character_ID = c.Id LIMIT 1) as Image FROM Character c ORDER BY c.Name")
 	if err != nil {
 		return data, err
 	}
 	for rows.Next() {
 		var d DB_Character
-		if err = rows.Scan(&d.Id, &d.Name); err != nil {
+		if err = rows.Scan(&d.Id, &d.Name, &d.Image); err != nil {
 			return data, err
 		}
 		data = append(data, d)
