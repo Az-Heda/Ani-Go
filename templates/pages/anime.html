@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html data-theme="dark">
-	<head>
-		{{ template "components/init" . }}
-	</head>
-	<body class="min-h-screen">
-		{{ template "components/navbar" . }}
-		
-		{{ template "components/anime_search" . }}
-		{{ template "components/anime_cards" . }}
+<html>
+{{ template "components/init" . }}
 
-		{{ template "components/footer" . }}
-	</body>
+<body>
+	{{ template "components/navbar" . }}
+	
+	{{ template "components/anime_jumbotron" . }}
+	{{ template "components/anime_intro" . }}
+	{{ template "components/anime_episodes" . }}
+	{{ template "components/anime_images" . }}
+
+	{{ template "components/footer" . }}
+</body>
+
 </html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+	<head>
+		{{ template "components/init" . }}
+	</head>
+	<body class="min-h-screen">
+		{{ template "components/navbar" . }}
+		
+		{{ template "components/anime_list_search" . }}
+		{{ template "components/anime_list_cards" . }}
+
+		{{ template "components/footer" . }}
+	</body>
+</html>
