@@ -5,7 +5,7 @@ import "github.com/gin-gonic/gin"
 var navbar [][]string = [][]string{
 	{"Home", "/"},
 	{"Anime list", "/list/anime"},
-	{"Dashboard", "/dashboard"},
+	// {"Dashboard", "/dashboard"},
 }
 
 func Init(r *gin.Engine) {
