@@ -1,0 +1,24 @@
+{{ define "components/anime_jumbotron" }}
+<section class="bg-white dark:bg-gray-900">
+	<div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
+		{{ if $.anime.AlternativeTitle.Valid }}
+		<h2
+			class="mb-4 text-3xl font-extrabold tracking-tight leading-none text-gray-900 md:text-4xl lg:text-5xl dark:text-white">
+			{{ $.anime.AlternativeTitle.String }}
+		</h2>
+		<p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400">
+			{{ $.anime.Title }}
+		</p>
+		{{ else }}
+		<h2
+			class="mb-4 text-3xl font-extrabold tracking-tight leading-none text-gray-900 md:text-4xl lg:text-5xl dark:text-white">
+			{{ $.anime.Title }}
+		</h2>
+		{{ end }}
+
+		{{ range $idx, $genre := $.genres }}
+		<a href="/genre/{{ $genre.Id }}" class="m-2 text-accent">{{ $genre.Name }}</a>
+		{{ end }}
+	</div>
+</section>
+{{ end }}

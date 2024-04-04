@@ -1,0 +1,12 @@
+{{ define "components/anime_images" }}
+<a name="gallery" class="divider text-2xl w-3/4 relative left-1/2 -translate-x-1/2">Gallery</a>
+<section class="flex flex-wrap gap-3 justify-center">
+	{{ range $idx, $url := $.images }}
+	{{ if gt $idx 0 }}
+	<div class="rounded-t-lg max-w-48 lg:max-w-60 2xl:max-w-80">
+		<img src="{{ $url }}" alt="" loading="lazy" fetchPriority="low" />
+	</div>
+	{{ end }}
+	{{ end }}
+</section>
+{{ end }}

@@ -5,7 +5,7 @@
 		data-title="{{ if $anime.AlternativeTitle.Valid }} {{ $anime.AlternativeTitle.String }} {{else}} {{ $anime.Title }} {{ end }}"
 		data-animeidx="{{ $idx }}">
 		{{ if $anime.Image.Valid }}
-		<a href="/anime/{{ $anime.id }}">
+		<a href="/anime/{{ $anime.Id }}">
 			<img class="rounded-t-lg w-[300px] max-h-[400px]" src="{{ $anime.Image.String }}" alt="" loading="lazy"
 				fetchPriority="low" />
 		</a>

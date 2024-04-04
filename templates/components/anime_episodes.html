@@ -1,0 +1,33 @@
+{{ define "components/anime_episodes" }}
+<a name="episodes" class="divider text-2xl w-3/4 relative left-1/2 -translate-x-1/2">Episodes</a>
+<section class="w-3/4 relative left-1/2 -translate-x-1/2 overflow-x-auto pb-16 ">
+	<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+		<thead class="text-md text-gray-700 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
+			<tr class="*:text-left">
+				<th scope="col" class="px-6 py-3">#</th>
+				<th scope="col" class="px-6 py-3">Aired</th>
+				<th scope="col" class="px-6 py-3">Title</th>
+				<th scope="col" class="px-6 py-3">Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{ range $idx, $episode := $.episodes }}
+			<tr class=" border-b dark:border-gray-700">
+				<td class="px-6 py-4">{{ $episode.Number }}</td>
+				<td class="px-6 py-4">
+					<script>
+						document.write(new Date(+'{{ $episode.Aired }}').toISOString().split('T')[0].split('-').reverse().join('/'));
+					</script>
+				</td>
+				<td class="px-6 py-4">{{ $episode.Title }}</td>
+				<td class="px-6 py-4 text-balance whitespace-nowrap truncate max-h-48">
+					{{ if $episode.Description.Valid }}
+					<a class="font-medium text-accent hover:cursor-pointer hover:underline">View</a>
+					{{ end }}
+				</td>
+			</tr>
+			{{ end }}
+		</tbody>
+	</table>
+</section>
+{{ end }}
