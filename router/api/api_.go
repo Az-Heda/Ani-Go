@@ -9,7 +9,7 @@ func Init(eng *gin.Engine) {
 	// SetGenreEndpoints(api)
 	// SetStudioEndpoints(api)
 	// SetTypeEndpoints(api)
-	// SetStatusEndpoints(api)
+	SetStatusEndpoints(api)
 	// SetSeasonEndpoints(api)
 	SetImageEndpoints(api)
 	// SetEpisodeEndpoints(api)
