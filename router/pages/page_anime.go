@@ -8,28 +8,31 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func checkPanic(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
 func serveAnime(c *gin.Context) {
 	var animeID string = c.Param("id")
 	var images []string
 
 	anime, err := db.SelectAnimeFromId(animeID)
-	if err != nil {
-		panic(err)
-	}
+	checkPanic(err)
 
 	if anime.Image.Valid {
 		images = strings.Split(anime.Image.String, "://:")
 	}
 
 	genres, err := db.SelectGenreFromAnimeId(animeID)
-	if err != nil {
-		panic(err)
-	}
+	checkPanic(err)
 
 	episodes, err := db.SelectEpisodeFromAnimeId(animeID)
-	if err != nil {
-		panic(err)
-	}
+	checkPanic(err)
+
+	characters, err := db.SelectCharacterFromAnimeId(animeID)
+	checkPanic(err)
 
 	c.HTML(http.StatusOK, "anime.html", gin.H{
 		"title":          "Anime",
@@ -39,5 +42,6 @@ func serveAnime(c *gin.Context) {
 		"images":         images,
 		"genres":         genres,
 		"episodes":       episodes,
+		"characters":     characters,
 	})
 }

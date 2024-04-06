@@ -17,7 +17,7 @@ func imageHandler(n int64, status int64) []string {
 }
 
 func serveIndex(c *gin.Context) {
-	var n int64 = 10
+	var n int64 = 50
 	allAnime, err := db.SelectAllAnime()
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
