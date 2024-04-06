@@ -30,7 +30,8 @@
 				<select id="select-anime-idx-{{ $idx }}"
 					class="block w-full p-2  text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 					data-animeid="{{ $anime.Id }}"
-					autocomplete="off">
+					autocomplete="off"
+					onchange="changeStatus(this)">
 					{{ range $status := $.statusList }}
 						<option value="{{ $status.Id }}" {{ if eq $status.Id $anime.CurrentStatus}} selected {{ end }} >{{ $status.Name }}</option>
 					{{ end }}
@@ -41,6 +42,12 @@
 	{{ end }}
 </div>
 <script>
-	console.error('Handle status changes...');
+	async function changeStatus(select) {
+		const animeID = select.dataset.animeid;
+		const url = '/api/status/:anime/:status'.replace(':status', select.value).replace(':anime', animeID);
+		console.log(url);
+		const res = await fetch(url, { method: 'PATCH' });
+		console.log(res.status)
+	}
 </script>
 {{ end }}

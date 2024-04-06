@@ -1,5 +1,9 @@
 {{ define "components/anime_intro" }}
 
+<div class="relative w-full text-center pt-4 pb-8">
+	<img src="{{ index $.images 0 }}" class="mx-auto max-w-80 rounded-lg">
+</div>
+
 <a name="description" class="divider text-2xl w-3/4 relative left-1/2 -translate-x-1/2">Description</a>
 <div class="pt-4 pb-8 px-4 mx-auto max-w-screen-3xl text-center lg:pb-16 lg:pt-8">
 	{{ if $.anime.Description.Valid }}

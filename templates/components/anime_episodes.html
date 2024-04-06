@@ -1,4 +1,5 @@
 {{ define "components/anime_episodes" }}
+{{ if $.episodes }}
 <a name="episodes" class="divider text-2xl w-3/4 relative left-1/2 -translate-x-1/2">Episodes</a>
 <section class="w-3/4 relative left-1/2 -translate-x-1/2 overflow-x-auto pb-16 ">
 	<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -30,4 +31,5 @@
 		</tbody>
 	</table>
 </section>
+{{ end }}
 {{ end }}
