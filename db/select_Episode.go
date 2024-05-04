@@ -56,7 +56,16 @@ func SelectEpisodeFromAnimeId(id string) ([]DB_Episode, error) {
 		return nil, err
 	}
 	var data []DB_Episode
-	rows, err := conn.Query("SELECT e.Id, e.Number, e.Title, e.Aired, e.Anime_Id, (SELECT GROUP_CONCAT(d.Description, '\n') FROM Episode_Descriptions ed LEFT JOIN Descriptions d ON ed.Description_ID = d.Id WHERE ed.Episode_ID = e.Id) AS Description FROM Episode e WHERE e.Anime_ID = ?", id)
+	rows, err := conn.Query(`
+		SELECT e.Id, e.Number, e.Title, e.Aired, e.Anime_Id,
+			  (
+				SELECT GROUP_CONCAT(d.Description, '\n')
+				FROM Descriptions d
+				WHERE d.Episode_ID = e.Id
+			  ) AS Description
+		FROM Episode e
+		WHERE e.Anime_ID = ?
+	`, id)
 	if err != nil {
 		return nil, err
 	}
