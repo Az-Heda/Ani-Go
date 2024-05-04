@@ -1,11 +1,13 @@
 tmp/
 temp/
+test/
 
 db-integration/migration/
 db-integration/data/
 
 *.exe
 *.sqlite3
+*.sqlite3-journal
 *.db
 
 go.sum
