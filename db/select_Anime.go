@@ -84,10 +84,14 @@ func SelectAnimeFromId(id string) (DB_Anime, error) {
 		SELECT a.Id, a.Title, a.AlternativeTitle, a.Aired, a.Duration, a.Url, a.CurrentStatus, a.Season_ID, a.Type_ID,
 			  (
 				SELECT GROUP_CONCAT(i.Url, '://:')
-				FROM Images i
-				LEFT JOIN Anime_Images ai ON ai.Image_ID = i.Id
-				WHERE ai.Anime_ID = a.Id
-				LIMIT 1
+				FROM (
+					SELECT ai1.Anime_ID, ai1.Image_ID, ai1.IsDefault
+					FROM Anime_Images ai1
+					WHERE ai1.Anime_ID = a.Id
+					ORDER BY ai1.IsDefault DESC
+				) ai2
+				LEFT JOIN Images i ON ai2.Image_ID = i.Id
+				ORDER BY i.Url DESC
 			  ) as Image,
 			  (
 				SELECT GROUP_CONCAT(d.Description, '\n')
