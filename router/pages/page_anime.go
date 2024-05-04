@@ -31,7 +31,7 @@ func serveAnime(c *gin.Context) {
 	episodes, err := db.SelectEpisodeFromAnimeId(animeID)
 	checkPanic(err)
 
-	characters, err := db.SelectCharacterFromAnimeId(animeID)
+	characters, err := db.SelectCharactersByIdWithDefaultImage(animeID)
 	checkPanic(err)
 
 	c.HTML(http.StatusOK, "anime.html", gin.H{
