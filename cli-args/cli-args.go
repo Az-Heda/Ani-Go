@@ -7,6 +7,7 @@ import (
 var allCliArgs map[string]interface{} = map[string]interface{}{
 	"--help":    showHelp,
 	"--init-db": initializeDB,
+	"--import":  importFile,
 }
 
 func ParseArguments() {
