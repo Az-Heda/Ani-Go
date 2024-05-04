@@ -1,9 +1,13 @@
 -----------------------------------------------------
 --                   DROP TABLES                   --
 -----------------------------------------------------
+
+DROP VIEW IF EXISTS RowCounter;
+
 DROP TABLE IF EXISTS Anime_Studioses;
 DROP TABLE IF EXISTS Anime_Characters;
 DROP TABLE IF EXISTS Anime_Genres;
+DROP TABLE IF EXISTS Anime_Themes;
 DROP TABLE IF EXISTS Anime_Images;
 DROP TABLE IF EXISTS Anime_Descriptions;
 DROP TABLE IF EXISTS Episode_Descriptions;
@@ -13,9 +17,10 @@ DROP TABLE IF EXISTS Character_Descriptions;
 DROP TABLE IF EXISTS Statuses;
 DROP TABLE IF EXISTS Types;
 DROP TABLE IF EXISTS Studios;
+DROP TABLE IF EXISTS Themes;
+DROP TABLE IF EXISTS Genres;
 DROP TABLE IF EXISTS Seasons;
 DROP TABLE IF EXISTS Images;
-DROP TABLE IF EXISTS Genres;
 DROP TABLE IF EXISTS Descriptions;
 
 DROP TABLE IF EXISTS Character;
@@ -48,7 +53,7 @@ CREATE TABLE Seasons (
 
 CREATE TABLE Images (
 	Id CHAR(110) PRIMARY KEY,
-	Url VARCHAR(2048) NOT NULL
+	Url VARCHAR(2048) NOT NULL UNIQUE
 );
 
 CREATE TABLE Genres (
@@ -56,9 +61,9 @@ CREATE TABLE Genres (
 	Name VARCHAR(2048) NOT NULL UNIQUE
 );
 
-CREATE TABLE Descriptions (
+CREATE TABLE Themes (
 	Id CHAR(110) PRIMARY KEY,
-	Description VARCHAR(2048) NOT NULL UNIQUE
+	Name VARCHAR(2048) NOT NULL UNIQUE
 );
 
 -----------------------------------------------------
@@ -70,16 +75,17 @@ CREATE TABLE Anime (
 	Title VARCHAR(2048),
 	AlternativeTitle VARCHAR(2048),
 	Aired INTEGER DEFAULT null,
-	Duration NUMBER DEFAULT NULL,
+	Duration INTEGER DEFAULT NULL,
+	Broadcast INTEGER DEFAULT NULL,
 	Url VARCHAR(2048) NOT NULL,
 
 	Season_ID CHAR(110) DEFAULT NULL,
 	Type_ID CHAR(110) DEFAULT NULL,
-	CurrentStatus NUMBER DEFAULT NULL,
+	CurrentStatus INTEGER DEFAULT NULL,
 
-	FOREIGN KEY (season_ID) REFERENCES Seasons(Id),
-	FOREIGN KEY (type_ID) REFERENCES Types(Id),
-	FOREIGN KEY (currentStatus) REFERENCES Statuses(Id)
+	FOREIGN KEY (season_ID) REFERENCES Seasons(Id) ON UPDATE CASCADE ON DELETE SET NULL,
+	FOREIGN KEY (type_ID) REFERENCES Types(Id) ON UPDATE CASCADE ON DELETE SET NULL,
+	FOREIGN KEY (currentStatus) REFERENCES Statuses(Id) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE Episode (
@@ -90,12 +96,21 @@ CREATE TABLE Episode (
 	Duration INTEGER DEFAULT NULL,
 
 	Anime_ID CHAR(110) NOT NULL,
-	FOREIGN KEY (Anime_ID) REFERENCES Anime(Id)
+	FOREIGN KEY (Anime_ID) REFERENCES Anime(Id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE Character (
 	Id CHAR(110) PRIMARY KEY,
-	Name VARCHAR(2048) NOT NULL
+	Name VARCHAR(2048) NOT NULL,
+	Url VARCHAR(2048) NOT NULL
+);
+
+CREATE TABLE Descriptions (
+	Id CHAR(110) PRIMARY KEY,
+	Description VARCHAR(2048) NOT NULL,
+	Anime_ID VARCHAR(110) DEFAULT NULL REFERENCES Anime(Id) ON UPDATE CASCADE ON DELETE SET NULL,
+	Episode_ID VARCHAR(110) DEFAULT NULL REFERENCES Episodes(Id) ON UPDATE CASCADE ON DELETE SET NULL,
+	Character_ID VARCHAR(110) DEFAULT NULL REFERENCES Character(Id) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 ----------------------------------------------------
@@ -105,59 +120,46 @@ CREATE TABLE Character (
 CREATE TABLE Anime_Studioses (
 	Anime_ID CHAR(110) NOT NULL,
 	Studio_ID CHAR(110) NOT NULL,
-	FOREIGN KEY (Anime_ID) REFERENCES Anime(Id),
-	FOREIGN KEY (Studio_ID) REFERENCES Studios(Id)
+	FOREIGN KEY (Anime_ID) REFERENCES Anime(Id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (Studio_ID) REFERENCES Studios(Id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE Anime_Characters (
 	Anime_ID CHAR(110) NOT NULL,
 	Character_ID CHAR(110) NOT NULL,
-	FOREIGN KEY (Anime_ID) REFERENCES Anime(Id),
-	FOREIGN KEY (Character_ID) REFERENCES Character(Id)
+	FOREIGN KEY (Anime_ID) REFERENCES Anime(Id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (Character_ID) REFERENCES Character(Id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE Anime_Genres (
 	Anime_ID CHAR(110) NOT NULL,
 	Genre_ID CHAR(110) NOT NULL,
-	FOREIGN KEY (Anime_ID) REFERENCES Anime(Id),
-	FOREIGN KEY (Genre_ID) REFERENCES Genres(Id)
+	FOREIGN KEY (Anime_ID) REFERENCES Anime(Id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (Genre_ID) REFERENCES Genres(Id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE Anime_Themes (
+	Anime_ID CHAR(110) NOT NULL,
+	Theme_ID CHAR(110) NOT NULL,
+	FOREIGN KEY (Anime_ID) REFERENCES Anime(Id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (Theme_ID) REFERENCES Themes(Id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE Anime_Images (
 	Anime_ID CHAR(110) NOT NULL,
 	Image_ID CHAR(110) NOT NULL,
-	FOREIGN KEY (Anime_ID) REFERENCES Anime(Id),
-	FOREIGN KEY (Image_ID) REFERENCES Images(Id)
-);
-
-CREATE TABLE Anime_Descriptions (
-	Anime_ID CHAR(110) NOT NULL,
-	Description_ID CHAR(110) NOT NULL,
-	FOREIGN KEY (Anime_ID) REFERENCES Anime(Id),
-	FOREIGN KEY (Description_ID) REFERENCES Descriptions(Id)
-);
-
-CREATE TABLE Episode_Descriptions (
-	Episode_ID CHAR(110) NOT NULL,
-	Description_ID CHAR(110) NOT NULL,
-	FOREIGN KEY (Episode_ID) REFERENCES Episode(Id),
-	FOREIGN KEY (Description_ID) REFERENCES Descriptions(Id)
+	IsDefault INTEGER DEFAULT 0,
+	FOREIGN KEY (Anime_ID) REFERENCES Anime(Id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (Image_ID) REFERENCES Images(Id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE Character_Images (
 	Character_ID CHAR(110) NOT NULL,
 	Image_ID CHAR(110) NOT NULL,
-	FOREIGN KEY (Character_ID) REFERENCES Character(Id),
-	FOREIGN KEY (Image_ID) REFERENCES Images(Id)
+	IsDefault INTEGER DEFAULT 0,
+	FOREIGN KEY (Character_ID) REFERENCES Character(Id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (Image_ID) REFERENCES Images(Id) ON UPDATE CASCADE ON DELETE CASCADE
 );
-
-CREATE TABLE Character_Descriptions (
-	Character_ID CHAR(110) NOT NULL,
-	Description_ID CHAR(110) NOT NULL,
-	FOREIGN KEY (Character_ID) REFERENCES Character(Id),
-	FOREIGN KEY (Description_ID) REFERENCES Descriptions(Id)
-);
-
 
 
 -----------------------------------------------------
@@ -165,22 +167,33 @@ CREATE TABLE Character_Descriptions (
 -----------------------------------------------------
 
 CREATE VIEW RowCounter AS 
-SELECT 'Anime_Studioses' AS "Table", COUNT(*) AS "Count" FROM Anime_Studioses UNION
-SELECT 'Anime_Characters', COUNT(*) FROM Anime_Characters UNION
+SELECT 'Anime_Characters' AS "Table", COUNT(*) AS "Count" FROM Anime_Characters UNION
 SELECT 'Anime_Genres', COUNT(*) FROM Anime_Genres UNION
 SELECT 'Anime_Images', COUNT(*) FROM Anime_Images UNION
-SELECT 'Anime_Descriptions', COUNT(*) FROM Anime_Descriptions UNION
-SELECT 'Episode_Descriptions', COUNT(*) FROM Episode_Descriptions UNION
+SELECT 'Anime_Studioses', COUNT(*) FROM Anime_Studioses UNION
+SELECT 'Anime_Themes', COUNT(*) FROM Anime_Themes UNION
+SELECT 'Anime', COUNT(*) FROM Anime UNION
 SELECT 'Character_Images', COUNT(*) FROM Character_Images UNION
-SELECT 'Character_Descriptions', COUNT(*) FROM Character_Descriptions UNION
-SELECT 'Statuses', COUNT(*) FROM Statuses UNION
-SELECT 'Types', COUNT(*) FROM Types UNION
-SELECT 'Studios', COUNT(*) FROM Studios UNION
-SELECT 'Seasons', COUNT(*) FROM Seasons UNION
-SELECT 'Images', COUNT(*) FROM Images UNION
-SELECT 'Genres', COUNT(*) FROM Genres UNION
-SELECT 'Descriptions', COUNT(*) FROM Descriptions UNION
 SELECT 'Character', COUNT(*) FROM Character UNION
+SELECT 'Descriptions', COUNT(*) FROM Descriptions UNION
 SELECT 'Episode', COUNT(*) FROM Episode UNION
-SELECT 'Anime', COUNT(*) FROM Anime
+SELECT 'Genres', COUNT(*) FROM Genres UNION
+SELECT 'Images', COUNT(*) FROM Images UNION
+SELECT 'Seasons', COUNT(*) FROM Seasons UNION
+SELECT 'Statuses', COUNT(*) FROM Statuses UNION
+SELECT 'Studios', COUNT(*) FROM Studios UNION
+SELECT 'Themes', COUNT(*) FROM Themes UNION
+SELECT 'Types', COUNT(*) FROM Types
 ORDER BY "Table" ASC;
+
+
+-----------------------------------------------------
+--                     INSERT                      --
+-----------------------------------------------------
+
+INSERT INTO Statuses (Id, Name) VALUES
+(0, 'Watched'),
+(1, 'Airing'),
+(2, 'Started'),
+(3, 'Plan to watch'),
+(4, 'New');
