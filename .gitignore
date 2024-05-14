@@ -11,3 +11,4 @@ db-integration/data/
 *.db
 
 go.sum
+import.txt
