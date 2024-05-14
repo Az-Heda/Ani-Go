@@ -35,20 +35,20 @@ func importFile(ec int, _ []string) {
 		panic(err)
 	}
 
-	conn, err := sqlx.Connect("sqlite", "./db/db-empty.sqlite3")
+	conn, err := sqlx.Connect("sqlite", "./db/db.sqlite3")
 
 	if err != nil {
 		panic(err)
 	}
 
-	conn.MustExec(`
-		DELETE FROM Anime
-		WHERE Id = (
-			SELECT Id
-			FROM Anime
-			ORDER BY ROWID DESC
-			LIMIT 1
-		)`)
+	// conn.MustExec(`
+	// 	DELETE FROM Anime
+	// 	WHERE Id = (
+	// 		SELECT Id
+	// 		FROM Anime
+	// 		ORDER BY ROWID DESC
+	// 		LIMIT 1
+	// 	)`)
 
 	// dbInitializer, err := os.ReadFile("./db/db-setup-v2.sql")
 	// if err != nil {
