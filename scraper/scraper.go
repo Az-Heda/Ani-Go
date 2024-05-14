@@ -26,7 +26,7 @@ func Init(url string) {
 		"Pictures":   url + "/pics",
 	}
 
-	conn, err := sqlx.Connect("sqlite", "./db/db-empty.sqlite3")
+	conn, err := sqlx.Connect("sqlite", "./db/db.sqlite3")
 	if err != nil {
 		panic(err)
 	}
