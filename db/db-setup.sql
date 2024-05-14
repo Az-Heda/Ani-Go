@@ -196,4 +196,6 @@ INSERT INTO Statuses (Id, Name) VALUES
 (1, 'Airing'),
 (2, 'Started'),
 (3, 'Plan to watch'),
-(4, 'New');
+(4, 'New'),
+(5, 'Dropped'),
+(6, 'Deleted');
