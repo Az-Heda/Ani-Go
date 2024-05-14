@@ -16,13 +16,19 @@ func checkPanic(err error) {
 
 func serveAnime(c *gin.Context) {
 	var animeID string = c.Param("id")
-	var images []string
+
+	var outImages []db.DB_Image
 
 	anime, err := db.SelectAnimeFromId(animeID)
 	checkPanic(err)
 
 	if anime.Image.Valid {
-		images = strings.Split(anime.Image.String, "://:")
+		for _, img := range strings.Split(anime.Image.String, "://:") {
+			queryResult, err := db.SelectImageIdFromUrl(img)
+			if err == nil {
+				outImages = append(outImages, queryResult)
+			}
+		}
 	}
 
 	genres, err := db.SelectGenreFromAnimeId(animeID)
@@ -39,7 +45,7 @@ func serveAnime(c *gin.Context) {
 		"menu":           navbar,
 		"activeMenuItem": "",
 		"anime":          anime,
-		"images":         images,
+		"images":         outImages,
 		"genres":         genres,
 		"episodes":       episodes,
 		"characters":     characters,

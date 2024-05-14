@@ -8,17 +8,44 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func imageHandler(n int64, status int64) []string {
-	randomImages, err := db.SelectRandomNImages(n, status)
-	if err != nil {
-		panic(err)
+func remapAnimeAiring(allAnime []db.DB_Anime) map[string][]db.DB_Anime {
+	var data map[string][]db.DB_Anime = map[string][]db.DB_Anime{}
+
+	for _, a := range allAnime {
+		var key string
+		switch a.Broadcast {
+		case -1:
+			key = "Unknown"
+		case 0:
+			key = "Sunday"
+		case 1:
+			key = "Monday"
+		case 2:
+			key = "Tuesday"
+		case 3:
+			key = "Wednesday"
+		case 4:
+			key = "Thursday"
+		case 5:
+			key = "Friday"
+		case 6:
+			key = "Saturday"
+		}
+		if _, ok := data[key]; !ok {
+			data[key] = []db.DB_Anime{}
+		}
+
+		data[key] = append(data[key], a)
 	}
-	return randomImages
+
+	return data
 }
 
 func serveIndex(c *gin.Context) {
-	var n int64 = 50
-	allAnime, err := db.SelectAllAnime()
+	airingAnime, err := db.SelectAiringAnime()
+
+	var animeDays map[string][]db.DB_Anime = remapAnimeAiring(airingAnime)
+
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
@@ -26,12 +53,10 @@ func serveIndex(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"title":          "Homepage",
-		"anime":          allAnime,
 		"menu":           navbar,
 		"activeMenuItem": "Home",
-		"randomImages_0": imageHandler(n, 0),
-		"randomImages_1": imageHandler(n, 1),
-		"randomImages_2": imageHandler(n, 2),
-		"randomImages_3": imageHandler(n, 3),
+		"airing":         animeDays,
+		"image_size":     150,
+		"days":           []string{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Unknown"},
 	})
 }
