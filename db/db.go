@@ -6,7 +6,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-var DatabaseName string = "db/db-empty.sqlite3"
+var DatabaseName string = "db/db.sqlite3"
 var DatabaseInitializer string = "db/db-setup.sql"
 var DatabaseDriver string = "sqlite"
 

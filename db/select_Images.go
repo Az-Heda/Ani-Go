@@ -43,6 +43,24 @@ func SelectImageFromId(id string) (DB_Image, error) {
 	return data, nil
 }
 
+func SelectImageIdFromUrl(url string) (DB_Image, error) {
+	conn, err := GetConnection()
+	if err != nil {
+		return DB_Image{}, err
+	}
+	var data DB_Image
+	rows, err := conn.Query("SELECT Id, Url FROM Images WHERE Url = ?", url)
+	if err != nil {
+		return DB_Image{}, err
+	}
+	for rows.Next() {
+		if err = rows.Scan(&data.Id, &data.Url); err != nil {
+			return DB_Image{}, err
+		}
+	}
+	return data, nil
+}
+
 func SelectRandomNImages(n int64, status int64) ([]string, error) {
 	conn, err := GetConnection()
 	if err != nil {
