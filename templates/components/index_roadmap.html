@@ -1,0 +1,25 @@
+{{ define "components/index_roadmap" }}
+<div class="*:flex *:flex-rows *:flex-wrap *:justify-center *:items-center w-full">
+
+	<div class="w-auto p-10">
+		{{ range $i, $day := $.days }}
+		{{ if index $.airing $day}}
+		<article class="m-10">
+			<h3 class="font-medium leading-tight">{{ $day }}</h3>
+			<p class="text-sm flex flex-cols flex-wrap">
+				{{ range $i, $a := index $.airing $day }}
+					{{ if $a.Image.Valid }}
+						<a href="/anime/{{ $a.Id }}">
+							<img src="{{ $a.Image.String }}" width="{{ $.image_size }}"/>
+						</a>
+					{{ end }}
+				{{ end }}
+			</p>
+		</article>
+
+		{{ end }}
+		{{ end }}
+	</div>
+
+</div>
+{{ end }}

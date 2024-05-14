@@ -52,10 +52,17 @@
 <script>
 	window.addEventListener('load', _ => {
 		let items = [...document.querySelectorAll('[data-title]')];
+		const autoHiddenItems = [ ...document.querySelectorAll('[data-autohidden="1"]')];
 		const filterByTitle = document.querySelector('#search-by-title');
 		const filterByStatus = document.querySelector('#filter-status');
 		
 		const hideClass = 'hidden';
+
+		for (const ahi of autoHiddenItems) {
+			if (!ahi.classList.contains(hideClass)) {
+				ahi.classList.add(hideClass);
+			}
+		}
 
 		const cb = (item) => {
 			let conditions = [true];

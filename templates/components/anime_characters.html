@@ -4,7 +4,9 @@
 <section class="flex flex-wrap gap-3 justify-center pt-8 pb-16">
 	{{ range $idx, $character := $.characters }}
 	<a href="/character/{{ $character.Id }}" class="rounded-t-lg w-48 lg:max-w-60 2xl:max-w-80" title="{{ $character.Name }}">
+		{{ if index $character.Image 0 }}
 		<img src="{{ index $character.Image 0 }}" alt="" loading="lazy" fetchPriority="low" />
+		{{ end }}
 		<!-- <h3 class="relative -translate-y-full w-full text-center bg-[#000000a5]">{{ $character.Name }}</h3> -->
 	</a>
 	{{ end }}

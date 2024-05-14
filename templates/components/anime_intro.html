@@ -1,7 +1,7 @@
 {{ define "components/anime_intro" }}
 
 <div class="relative w-full text-center pt-4 pb-8">
-	<img src="{{ index $.images 0 }}" class="mx-auto max-w-80 rounded-lg">
+	<img src="{{ (index $.images 0).Url }}" class="mx-auto max-w-80 rounded-lg">
 </div>
 
 <a name="description" class="divider text-2xl w-3/4 relative left-1/2 -translate-x-1/2">Description</a>
