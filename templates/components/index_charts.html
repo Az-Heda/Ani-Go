@@ -1,0 +1,139 @@
+{{ define "components/index_charts" }}
+<section class="bg-white dark:bg-gray-900">
+	<script>
+		function map(n, start1, stop1, start2, stop2) {
+			return (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
+		}
+
+		function createColors(from, to, n) {
+			const steps = [...new Array(n).keys()].map(i => map(i, 0, n - 1, 0, 1));
+			const c = Colors.blend(from, to, 0.5);
+			const colors = steps.map(s => Colors.blend(from, to, s));
+			colors.map(i => Colors.logColor(i));
+			return colors;
+		}
+	</script>
+
+	<div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16">
+
+		<div class="grid md:grid-cols-2 gap-8">
+			<div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 md:p-12">
+				<a
+					class="bg-green-100 text-green-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-green-400 mb-2">
+					Anime Status
+				</a>
+				<h2 class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2">
+					Current anime status reppresentation
+				</h2>
+				<p class="text-lg font-normal text-gray-500 dark:text-gray-400 mb-4 h-[75vh]"
+					id="current-status-chart-zone"></p>
+				<script>
+					(() => {
+						const data = Object.entries(JSON.parse({{ $.charts_pie_CurrentStatusCounter }})).map(i => ({ name: i[0], value: i[1] }));
+						const total = data.reduce((prev, curr) => prev + curr.value, 0);
+					const pieChartOptions = {
+						container: document.querySelector('#current-status-chart-zone'),
+						theme: 'ag-polychroma-dark',
+						data: data,
+						series: [
+							{
+								type: 'donut',
+								calloutLabelKey: 'name',
+								legendItemKey: 'name',
+								angleKey: 'value',
+								innerRadiusRatio: 0.50,
+								sectorLabelKey: "value",
+								sectorLabel: {
+									color: "#000000",
+									fontWeight: "bold",
+									formatter: ({ value }) => Math.round((+value * 100 / total) * 1e2) / 1e2 + '%'
+								}
+							}
+						],
+						background: { fill: 'transparent' },
+					}
+
+					agCharts.AgCharts.create(pieChartOptions);
+					}) ();
+				</script>
+			</div>
+
+
+			<div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 md:p-12">
+				<a
+					class="bg-green-100 text-green-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-green-400 mb-2">
+					Anime release date
+				</a>
+				<h2 class="text-gray-900 dark:text-white text-3xl font-extrabold mb-2">
+					Anime release date distribution
+				</h2>
+				<p class="text-lg font-normal text-gray-500 dark:text-gray-400 mb-4 h-[75vh]"
+					id="year-month-count-heatmap-zone"></p>
+				<script>
+					(() => {
+						const tempData = JSON.parse({{ $.chart_heatmap_YearMonthCounter }});
+					const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+					const data = [];
+
+					for (const year of Object.keys(tempData)) {
+						for (const month of Object.keys(tempData[year])) {
+							data.push({ month, year: +year, count: (tempData[year][month] > 0) ? tempData[year][month] : undefined })
+						}
+					}
+
+					data.sort((a, b) => {
+						return (a.year < b.year)
+							? -1
+							: (a.year > b.year)
+								? 1
+								: months.indexOf(a.month) - months.indexOf(b.month)
+					})
+					console.log(data);
+					const heatmapChartOptions = {
+						container: document.querySelector('#year-month-count-heatmap-zone'),
+						theme: 'ag-polychroma-dark',
+						data: data,
+						series: [
+							{
+								type: 'heatmap',
+								xKey: 'month',
+								xName: 'Month',
+								yKey: 'year',
+								yName: 'Year',
+								colorKey: 'count',
+								colorName: 'Count',
+								colorRange: ['#D73027', '#F46D43', '#FDAE61', '#FEE08B', '#FFFFBF', '#D9EF8B', '#A6D96A', '#66BD63', '#1A9850'].reverse(),
+								label: { enable: false, color: '#000' }
+							}
+						],
+						gradientLegend: { enabled: false },
+						background: { fill: 'transparent' },
+					}
+
+					agCharts.AgCharts.create(heatmapChartOptions);
+					}) ();
+				</script>
+			</div>
+		</div>
+
+		<div
+			class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 md:p-12 my-8">
+			<a href="#"
+				class="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-blue-400 mb-2">
+				Tutorial
+			</a>
+			<h1 class="text-gray-900 dark:text-white text-3xl md:text-5xl font-extrabold mb-2">
+				How to quickly deploy a static website
+			</h1>
+			<p class="text-lg font-normal text-gray-500 dark:text-gray-400 mb-6">
+				Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of
+				tools that even influence both web designers and developers.
+			</p>
+			<a href="#"
+				class="inline-flex justify-center items-center py-2.5 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+				Read more
+			</a>
+		</div>
+	</div>
+</section>
+{{ end }}

@@ -2,12 +2,17 @@
 <html data-theme="dark">
 	<head>
 		{{ template "components/init" . }}
+		<script src="/static/js/chart.js"></script>
+		<script src="/static/js/grid.js"></script>
+		<script src="/static/js/colors.js"></script>
 	</head>
 	<body class="min-h-screen">
 		{{ template "components/navbar" . }}
 		
 		{{ template "components/index_jumbotron" . }}
 		{{ template "components/index_roadmap" . }}
+
+		{{ template "components/index_charts" . }}
 
 		{{ template "components/footer" . }}
 	</body>
