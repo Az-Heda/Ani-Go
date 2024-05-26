@@ -1,0 +1,4 @@
+*.min.*
+
+fonts/*.*
+!fonts/*[.py, .txt]
