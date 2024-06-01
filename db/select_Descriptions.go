@@ -42,3 +42,27 @@ func SelectDescriptionFromId(id string) (DB_Description, error) {
 	}
 	return data, nil
 }
+
+func SelectDescriptionFromAnimeID(anime_id string) ([]DB_Description, error) {
+	conn, err := GetConnection()
+	if err != nil {
+		return nil, err
+	}
+	var data []DB_Description
+	rows, err := conn.Query(`
+		SELECT Id, Description
+		FROM Descriptions 
+		WHERE Anime_ID = ?
+	`, anime_id)
+	if err != nil {
+		return data, err
+	}
+	for rows.Next() {
+		var d DB_Description
+		if err = rows.Scan(&d.Id, &d.Description); err != nil {
+			return data, err
+		}
+		data = append(data, d)
+	}
+	return data, nil
+}

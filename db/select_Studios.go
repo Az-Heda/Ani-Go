@@ -60,3 +60,29 @@ func SelectStudioFromName(name string) (DB_Studio, error) {
 	}
 	return data, nil
 }
+
+func SelectStudioFromAnime(anime_id string) ([]DB_Studio, error) {
+	conn, err := GetConnection()
+	if err != nil {
+		return nil, err
+	}
+	var data []DB_Studio
+	rows, err := conn.Query(`
+		SELECT s.Id, s.Name
+		FROM Studios s
+		LEFT JOIN Anime_Studioses as2 ON s.Id = as2.Studio_ID
+		WHERE s.Anime_ID = ?
+		ORDER BY Name ASC
+	`, anime_id)
+	if err != nil {
+		return data, err
+	}
+	for rows.Next() {
+		var d DB_Studio
+		if err = rows.Scan(&d.Id, &d.Name); err != nil {
+			return data, err
+		}
+		data = append(data, d)
+	}
+	return data, nil
+}
