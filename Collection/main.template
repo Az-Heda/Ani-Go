@@ -1,0 +1,24 @@
+
+Title: --title--
+Original title: --original.title--
+Studio: --studios--
+Type: --type--
+Status: --status--
+
+## Genres
+--genres--
+## Themes
+--themes--
+## Description
+--description--
+## Episodes
+| Number | Title | Aired |
+| :---- | ------ | :---: |
+--episodes--
+
+## Characters
+
+| Name | Image |
+| :--- | ----- | 
+--characters--
+

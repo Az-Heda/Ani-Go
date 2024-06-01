@@ -1,0 +1,30 @@
+{
+  "collapse-filter": false,
+  "search": "",
+  "showTags": true,
+  "showAttachments": false,
+  "hideUnresolved": true,
+  "showOrphans": true,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "path:Anime",
+      "color": {
+        "a": 1,
+        "rgb": 1682898
+      }
+    }
+  ],
+  "collapse-display": false,
+  "showArrow": false,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1.2484375,
+  "lineSizeMultiplier": 2.396875,
+  "collapse-forces": false,
+  "centerStrength": 0.703125,
+  "repelStrength": 14.6875,
+  "linkStrength": 0.989583333333333,
+  "linkDistance": 368,
+  "scale": 0.841017967519109,
+  "close": true
+}
