@@ -5,9 +5,10 @@ import (
 )
 
 var allCliArgs map[string]interface{} = map[string]interface{}{
-	"--help":    showHelp,
-	"--init-db": initializeDB,
-	"--import":  importFile,
+	"--help":         showHelp,
+	"--init-db":      initializeDB,
+	"--import":       importFile,
+	"--create-vault": createVault,
 }
 
 func ParseArguments() {
