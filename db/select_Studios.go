@@ -71,8 +71,8 @@ func SelectStudioFromAnime(anime_id string) ([]DB_Studio, error) {
 		SELECT s.Id, s.Name
 		FROM Studios s
 		LEFT JOIN Anime_Studioses as2 ON s.Id = as2.Studio_ID
-		WHERE s.Anime_ID = ?
-		ORDER BY Name ASC
+		WHERE as2.Anime_ID = ?
+		ORDER BY s.Name ASC
 	`, anime_id)
 	if err != nil {
 		return data, err

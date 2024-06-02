@@ -52,7 +52,6 @@ func SelectAllAnime() ([]DB_Anime, error) {
 	if err != nil {
 		return data, err
 	}
-	var tx *sqlx.Tx = conn.MustBegin()
 	for rows.Next() {
 		var d DB_Anime
 		if err = rows.Scan(&d.Id, &d.Title, &d.AlternativeTitle, &d.Aired, &d.Duration, &d.Url, &d.CurrentStatus, &d.Season_ID, &d.Type_ID, &d.Broadcast, &d.Image, &d.Description); err != nil {
@@ -60,7 +59,7 @@ func SelectAllAnime() ([]DB_Anime, error) {
 		}
 
 		if len(d.Image.String) == 0 {
-			images, _ := selectAnimeAlternativeImages(tx, d.Id)
+			images, _ := SelectAnimeAlternativeImages(d.Id, true)
 			if len(images) > 0 {
 				d.Image = sql.NullString{
 					String: images[0],
@@ -70,7 +69,6 @@ func SelectAllAnime() ([]DB_Anime, error) {
 		}
 		data = append(data, d)
 	}
-	tx.Commit()
 	return data, nil
 }
 
@@ -145,8 +143,9 @@ func SelectAnimeFromPartName(name string) ([]DB_Anime, error) {
 	return data, nil
 }
 
-func selectAnimeAlternativeImages(tx *sqlx.Tx, id string) ([]string, error) {
+func SelectAnimeAlternativeImages(id string, update bool) ([]string, error) {
 	conn, err := GetConnection()
+	var tx *sqlx.Tx = conn.MustBegin()
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +162,7 @@ func selectAnimeAlternativeImages(tx *sqlx.Tx, id string) ([]string, error) {
 	if err != nil {
 		return []string{}, err
 	}
-	if len(data) == 1 {
+	if len(data) == 1 && update {
 		if len(data[0]) > 0 {
 			tx.MustExec(`
 				UPDATE Anime_Images
@@ -179,9 +178,10 @@ func selectAnimeAlternativeImages(tx *sqlx.Tx, id string) ([]string, error) {
 				data[0],
 			)
 		}
+		tx.Commit()
 		return data, nil
 	}
-	return []string{}, err
+	return data, err
 }
 
 func SelectAiringAnime() ([]DB_Anime, error) {
@@ -211,7 +211,6 @@ func SelectAiringAnime() ([]DB_Anime, error) {
 	if err != nil {
 		return data, err
 	}
-	var tx *sqlx.Tx = conn.MustBegin()
 	for rows.Next() {
 		var d DB_Anime
 		if err = rows.Scan(&d.Id, &d.Title, &d.AlternativeTitle, &d.Aired, &d.Duration, &d.Url, &d.CurrentStatus, &d.Season_ID, &d.Type_ID, &d.Broadcast, &d.Image); err != nil {
@@ -219,7 +218,7 @@ func SelectAiringAnime() ([]DB_Anime, error) {
 		}
 
 		if len(d.Image.String) == 0 {
-			images, _ := selectAnimeAlternativeImages(tx, d.Id)
+			images, _ := SelectAnimeAlternativeImages(d.Id, true)
 			if len(images) > 0 {
 				d.Image = sql.NullString{
 					String: images[0],
@@ -229,6 +228,5 @@ func SelectAiringAnime() ([]DB_Anime, error) {
 		}
 		data = append(data, d)
 	}
-	tx.Commit()
 	return data, nil
 }
