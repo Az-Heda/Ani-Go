@@ -16,7 +16,7 @@ The server will run on **http://127.0.0.1:8770**
 
 
 ## TODO
-|      Page      |           Status (✔ \| ✖)           |
+|      Page      |           Status (✔ \| ❌)          |
 | :------------- | :----------------------------------: |
 | Homepage       | <span style="color:#00ff00">✔</span> |
 | Anime list     | <span style="color:#00ff00">✔</span> |
