@@ -16,9 +16,19 @@
 		</h2>
 		{{ end }}
 
-		{{ range $idx, $genre := $.genres }}
-		<a href="/genre/{{ $genre.Id }}" class="m-2 text-accent">{{ $genre.Name }}</a>
-		{{ end }}
+		<div class="flex flex-col justify-center items-center gap-y-3">
+			<div class="flex flex-row justify-center items-center gap-x-5">
+				{{ range $idx, $genre := $.genres }}
+				<a href="/genre/{{ $genre.Id }}" class="m-2 text-accent">{{ $genre.Name }}</a>
+				{{ end }}
+			</div>
+
+			<div class="flex flex-row justify-center items-center gap-x-5">
+				{{ range $idx, $theme := $.themes }}
+				<a href="/theme/{{ $theme.Id }}" class="m-2 text-accent">{{ $theme.Name }}</a>
+				{{ end }}
+			</div>
+		</div>
 	</div>
 </section>
 {{ end }}
