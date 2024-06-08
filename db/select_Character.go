@@ -20,6 +20,56 @@ type DB_Character_MultipleImages struct {
 	Description sql.NullString
 }
 
+func SelectCharacterFromID(id string) (DB_Character_MultipleImages, error) {
+	conn, err := GetConnection()
+	if err != nil {
+		return DB_Character_MultipleImages{}, err
+	}
+	var data DB_Character_MultipleImages = DB_Character_MultipleImages{}
+	rows, err := conn.Query(`
+			SELECT c.Id, c.Name,
+				  (
+					SELECT GROUP_CONCAT(i.Url, '://:')
+					FROM Images i
+					LEFT JOIN Character_Images ci ON ci.Image_ID = i.Id
+					WHERE ci.Character_ID = c.Id
+				  ) as Image,
+				  (
+					SELECT GROUP_CONCAT(d.Description, '\n')
+					FROM Descriptions d
+					WHERE d.Character_ID = c.Id
+				  ) as Description
+			FROM Character c
+			LEFT JOIN Anime_Characters ac ON ac.Character_ID = c.Id
+			WHERE ac.Character_ID = ?;
+		`, id)
+	if err != nil {
+		return DB_Character_MultipleImages{}, err
+	}
+	var tx *sqlx.Tx = conn.MustBegin()
+	for rows.Next() {
+		var d DB_Character_SingleImage
+		if err = rows.Scan(&d.Id, &d.Name, &d.Image, &d.Description); err != nil {
+			return DB_Character_MultipleImages{}, err
+		}
+		var instance DB_Character_MultipleImages = DB_Character_MultipleImages{
+			Id:          d.Id,
+			Name:        d.Name,
+			Image:       strings.Split(d.Image.String, "://:"),
+			Description: d.Description,
+		}
+
+		if len(d.Image.String) == 0 {
+			alternativeImages, _ := selectCharacterAlternativeImages(tx, instance.Id)
+			instance.Image = alternativeImages
+		}
+		data = instance
+		// data = append(data, instance)
+	}
+	tx.Commit()
+	return data, nil
+}
+
 func SelectCharactersByIdWithDefaultImage(id string) ([]DB_Character_MultipleImages, error) {
 	conn, err := GetConnection()
 	if err != nil {
