@@ -163,6 +163,29 @@ CREATE TABLE Character_Images (
 
 
 -----------------------------------------------------
+--                     INDEXES                     --
+-----------------------------------------------------
+
+CREATE UNIQUE INDEX Statuses_Name_key ON Statuses(Name);
+CREATE UNIQUE INDEX Types_Id_key ON Types(Id);
+CREATE UNIQUE INDEX Types_Name_key ON Types(Name);
+CREATE UNIQUE INDEX Studios_Id_key ON Studios(Id);
+CREATE UNIQUE INDEX Studios_Name_key ON Studios(Name);
+CREATE UNIQUE INDEX Seasons_Id_key ON Seasons(Id);
+CREATE UNIQUE INDEX Seasons_Season_key ON Seasons(Season);
+CREATE UNIQUE INDEX Images_Id_key ON Images(Id);
+CREATE UNIQUE INDEX Images_Url_key ON Images(Url);
+CREATE UNIQUE INDEX Genres_Id_key ON Genres(Id);
+CREATE UNIQUE INDEX Genres_Name_key ON Genres(Name);
+CREATE UNIQUE INDEX Themes_Id_key ON Themes(Id);
+CREATE UNIQUE INDEX Themes_Name_key ON Themes(Name);
+CREATE UNIQUE INDEX Anime_Id_key ON Anime(Id);
+CREATE UNIQUE INDEX Episode_Id_key ON Episode(Id);
+CREATE UNIQUE INDEX Character_Id_key ON Character(Id);
+CREATE UNIQUE INDEX Description_Id_key ON Descriptions(Id);
+
+
+-----------------------------------------------------
 --                      VIEWS                      --
 -----------------------------------------------------
 
