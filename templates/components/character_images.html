@@ -1,0 +1,25 @@
+{{ define "components/character_images" }}
+{{ if $.images }}
+<a name="gallery" class="divider text-2xl w-3/4 relative left-1/2 -translate-x-1/2">Gallery</a>
+<section class="flex flex-wrap gap-3 justify-center py-4 pb-16">
+	{{ range $idx, $img := $.images }}
+	<div class="rounded-t-lg max-w-48">
+		<img src="{{ $img.Url }}" class="hover:cursor-pointer" alt="" loading="lazy" fetchPriority="low"
+			onclick="setDefaultImage('{{ $.character.Id }}', '{{ $img.Id }}')" />
+	</div>
+	{{ end }}
+</section>
+{{ end }}
+
+<script>
+	async function setDefaultImage(characterID, imageID) {
+		const parts = ['', 'api', 'is-default', 'character', characterID, imageID,];
+		console.log('Url: ', parts.join('/'));
+		const res = await fetch(parts.join('/'), { method: 'GET' });
+		if (res.status == 200) {
+			document.location.reload();
+		}
+	}
+</script>
+
+{{ end }}

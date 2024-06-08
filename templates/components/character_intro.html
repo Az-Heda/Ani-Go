@@ -1,0 +1,17 @@
+{{ define "components/character_intro" }}
+
+<div class="relative w-full text-center pt-4 pb-8">
+	<img src="{{ index $.character.Image 0 }}" class="mx-auto max-w-80 rounded-lg">
+</div>
+
+<a name="description" class="divider text-2xl w-3/4 relative left-1/2 -translate-x-1/2">Description</a>
+<div class="pt-4 pb-8 px-4 mx-auto max-w-screen-3xl text-center lg:pb-16 lg:pt-8">
+	{{ if $.character.Description.Valid }}
+	{{ range $idx, $d := $.description}}
+	<p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400 text-justify">
+		{{ $d }}
+	</p>
+	{{ end }}
+	{{ end }}
+</div>
+{{ end }}

@@ -28,8 +28,7 @@ func serveChangeAnimeIsDefault(c *gin.Context) {
 	var tx *sqlx.Tx = conn.MustBegin()
 	db.UpdateAnimeImage_RemoveIsDefault(tx, anime_id)
 	db.UpdateAnimeImage_IsDefault(tx, anime_id, image_id, true)
-	err = tx.Commit()
-	if err != nil {
+	if tx.Commit() != nil {
 		panic(err)
 	}
 }
@@ -46,8 +45,7 @@ func serveChangeCharacterIsDefault(c *gin.Context) {
 	var tx *sqlx.Tx = conn.MustBegin()
 	db.UpdateCharacterImage_RemoveIsDefault(tx, character_id)
 	db.UpdateCharacterImage_IsDefault(tx, character_id, image_id, true)
-	err = tx.Commit()
-	if err != nil {
+	if tx.Commit() != nil {
 		panic(err)
 	}
 }
