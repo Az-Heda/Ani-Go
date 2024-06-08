@@ -13,12 +13,12 @@ func UpdateCharacterImage_RemoveIsDefault(tx *sqlx.Tx, character_id string) {
 
 func UpdateCharacterImage_IsDefault(tx *sqlx.Tx, character_id string, image_id string, is_default bool) {
 	var queries []string = []string{
-		` UPDATE Character_Images
+		`UPDATE Character_Images
 			SET IsDefault = 1
 			WHERE Character_ID = ? AND
 				  Image_ID = ? `,
 
-		` UPDATE Character_Images
+		`UPDATE Character_Images
 			SET IsDefault = 1
 			WHERE Character_ID = ? AND
 				  Image_ID = (
@@ -36,7 +36,6 @@ func UpdateCharacterImage_IsDefault(tx *sqlx.Tx, character_id string, image_id s
 	} else {
 		queryIndex = 0
 	}
-
 	if len(character_id) > 0 && len(image_id) > 0 {
 		tx.MustExec(
 			queries[queryIndex],
