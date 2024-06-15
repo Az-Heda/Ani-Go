@@ -6,7 +6,6 @@ import (
 	db "AniGo/db"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
 )
 
 func SetIsDefaultEndpoints(g *gin.RouterGroup) {
@@ -25,11 +24,10 @@ func serveChangeAnimeIsDefault(c *gin.Context) {
 		return
 	}
 
-	var tx *sqlx.Tx = conn.MustBegin()
-	db.UpdateAnimeImage_RemoveIsDefault(tx, anime_id)
-	db.UpdateAnimeImage_IsDefault(tx, anime_id, image_id, true)
-	if tx.Commit() != nil {
-		panic(err)
+	_, err = conn.Query(`UPDATE Anime SET Image_Id = ? WHERE Id = ?`, image_id, anime_id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
 	}
 }
 
@@ -42,10 +40,9 @@ func serveChangeCharacterIsDefault(c *gin.Context) {
 		return
 	}
 
-	var tx *sqlx.Tx = conn.MustBegin()
-	db.UpdateCharacterImage_RemoveIsDefault(tx, character_id)
-	db.UpdateCharacterImage_IsDefault(tx, character_id, image_id, true)
-	if tx.Commit() != nil {
-		panic(err)
+	_, err = conn.Query(`UPDATE Character SET Image_Id = ? WHERE Id = ?`, image_id, character_id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
 	}
 }
