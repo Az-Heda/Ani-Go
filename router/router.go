@@ -14,7 +14,7 @@ var PORT int = 8770
 var URL string = HOST + ":" + fmt.Sprintf("%d", PORT)
 
 func Init() {
-	// gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 	router.LoadHTMLGlob("templates/**/*.html")
 
