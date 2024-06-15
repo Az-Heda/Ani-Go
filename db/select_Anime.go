@@ -28,20 +28,18 @@ func SelectAllAnime() ([]DB_Anime, error) {
 	}
 	var data []DB_Anime
 	rows, err := conn.Query(`
-		SELECT a.Id, a.Title, a.AlternativeTitle, a.Aired, a.Duration, a.Url, a.CurrentStatus, a.Season_ID, a.Type_ID, a.Broadcast,
-			  (
-				SELECT i.Url
-				FROM Images i
-				LEFT JOIN Anime_Images ai ON ai.Image_ID = i.Id
-				WHERE ai.Anime_ID = a.Id AND ai.IsDefault = 1
-				LIMIT 1
-			  ) as Image,
-			  (
+		SELECT
+			a.Id, a.Title, a.AlternativeTitle,
+			a.Aired, a.Duration, a.Url,
+			a.CurrentStatus, a.Season_ID,
+			a.Type_ID, a.Broadcast, i.Url as Image,
+			(
 				SELECT GROUP_CONCAT(d.Description, '\n')
 				FROM Descriptions d
 				WHERE d.Anime_ID = a.Id
 			) as Description
 		FROM Anime a
+		LEFT JOIN Images i ON a.Image_Id = I.Id
 		GROUP BY a.Id
 		ORDER BY
 		CASE WHEN AlternativeTitle IS NOT NULL
@@ -80,24 +78,17 @@ func SelectAnimeFromId(id string) (DB_Anime, error) {
 	var data DB_Anime
 
 	rows, err := conn.Query(`
-		SELECT a.Id, a.Title, a.AlternativeTitle, a.Aired, a.Duration, a.Url, a.CurrentStatus, a.Season_ID, a.Type_ID, a.Broadcast,
-			  (
-				SELECT GROUP_CONCAT(i.Url, '://:')
-				FROM (
-					SELECT ai1.Anime_ID, ai1.Image_ID, ai1.IsDefault
-					FROM Anime_Images ai1
-					WHERE ai1.Anime_ID = a.Id
-					ORDER BY ai1.IsDefault DESC
-				) ai2
-				LEFT JOIN Images i ON ai2.Image_ID = i.Id
-				ORDER BY i.Url DESC
-			  ) as Image,
-			  (
+		SELECT
+			a.Id, a.Title, a.AlternativeTitle,
+			a.Aired, a.Duration, a.Url, a.CurrentStatus,
+			a.Season_ID, a.Type_ID, a.Broadcast, i.Url as Image,
+			(
 				SELECT GROUP_CONCAT(d.Description, '\n')
 				FROM Descriptions d
 				WHERE d.Anime_ID = a.Id
-			  ) as Description
+			) as Description
 		FROM Anime a
+		LEFT JOIN Images i ON i.Id = a.Image_Id
 		WHERE a.Id = ?
 		GROUP BY a.Id
 		ORDER BY

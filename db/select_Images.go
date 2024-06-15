@@ -61,6 +61,56 @@ func SelectImageIdFromUrl(url string) (DB_Image, error) {
 	return data, nil
 }
 
+func SelectImagesFromAnimeId(animeID string) ([]DB_Image, error) {
+	conn, err := GetConnection()
+	var data []DB_Image
+	if err != nil {
+		return data, err
+	}
+	rows, err := conn.Query(`
+		SELECT i.Id, i.Url
+		FROM Images i
+		LEFT JOIN Anime_Images ai ON i.Id = ai.Image_ID
+		WHERE ai.Anime_ID = ?
+	`, animeID)
+	if err != nil {
+		return data, err
+	}
+	for rows.Next() {
+		var d DB_Image
+		if err = rows.Scan(&d.Id, &d.Url); err != nil {
+			return data, err
+		}
+		data = append(data, d)
+	}
+	return data, nil
+}
+
+func SelectImagesFromCharacterId(animeID string) ([]DB_Image, error) {
+	conn, err := GetConnection()
+	var data []DB_Image
+	if err != nil {
+		return data, err
+	}
+	rows, err := conn.Query(`
+		SELECT i.Id, i.Url
+		FROM Images i
+		LEFT JOIN Character_Images ci ON i.Id = ci.Image_ID
+		WHERE ci.Character_ID = ?
+	`, animeID)
+	if err != nil {
+		return data, err
+	}
+	for rows.Next() {
+		var d DB_Image
+		if err = rows.Scan(&d.Id, &d.Url); err != nil {
+			return data, err
+		}
+		data = append(data, d)
+	}
+	return data, nil
+}
+
 func SelectRandomNImages(n int64, status int64) ([]string, error) {
 	conn, err := GetConnection()
 	if err != nil {

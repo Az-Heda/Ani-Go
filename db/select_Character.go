@@ -20,49 +20,44 @@ type DB_Character_MultipleImages struct {
 	Description sql.NullString
 }
 
-func SelectCharacterFromID(id string) (DB_Character_MultipleImages, error) {
+func SelectCharacterFromID(id string) (DB_Character_SingleImage, error) {
 	conn, err := GetConnection()
 	if err != nil {
-		return DB_Character_MultipleImages{}, err
+		return DB_Character_SingleImage{}, err
 	}
-	var data DB_Character_MultipleImages = DB_Character_MultipleImages{}
+	var data DB_Character_SingleImage = DB_Character_SingleImage{}
 	rows, err := conn.Query(`
-			SELECT c.Id, c.Name,
-				  (
-					SELECT GROUP_CONCAT(i.Url, '://:')
-					FROM Images i
-					LEFT JOIN Character_Images ci ON ci.Image_ID = i.Id
-					WHERE ci.Character_ID = c.Id
-				  ) as Image,
-				  (
+			SELECT c.Id, c.Name, i.Url as Image,
+				(
 					SELECT GROUP_CONCAT(d.Description, '\n')
 					FROM Descriptions d
 					WHERE d.Character_ID = c.Id
-				  ) as Description
+				) as Description
 			FROM Character c
+			LEFT JOIN Images i ON i.Id = c.Image_ID
 			LEFT JOIN Anime_Characters ac ON ac.Character_ID = c.Id
 			WHERE ac.Character_ID = ?;
 		`, id)
 	if err != nil {
-		return DB_Character_MultipleImages{}, err
+		return DB_Character_SingleImage{}, err
 	}
 	var tx *sqlx.Tx = conn.MustBegin()
 	for rows.Next() {
 		var d DB_Character_SingleImage
 		if err = rows.Scan(&d.Id, &d.Name, &d.Image, &d.Description); err != nil {
-			return DB_Character_MultipleImages{}, err
+			return DB_Character_SingleImage{}, err
 		}
-		var instance DB_Character_MultipleImages = DB_Character_MultipleImages{
+		var instance DB_Character_SingleImage = DB_Character_SingleImage{
 			Id:          d.Id,
 			Name:        d.Name,
-			Image:       strings.Split(d.Image.String, "://:"),
+			Image:       d.Image,
 			Description: d.Description,
 		}
 
-		if len(d.Image.String) == 0 {
-			alternativeImages, _ := selectCharacterAlternativeImages(tx, instance.Id)
-			instance.Image = alternativeImages
-		}
+		// if len(d.Image.String) == 0 {
+		// 	alternativeImages, _ := selectCharacterAlternativeImages(tx, instance.Id)
+		// 	instance.Image = alternativeImages
+		// }
 		data = instance
 		// data = append(data, instance)
 	}
@@ -70,26 +65,21 @@ func SelectCharacterFromID(id string) (DB_Character_MultipleImages, error) {
 	return data, nil
 }
 
-func SelectCharactersByIdWithDefaultImage(id string) ([]DB_Character_MultipleImages, error) {
+func SelectCharactersByIdWithDefaultImage(id string) ([]DB_Character_SingleImage, error) {
 	conn, err := GetConnection()
 	if err != nil {
 		return nil, err
 	}
-	var data []DB_Character_MultipleImages = []DB_Character_MultipleImages{}
+	var data []DB_Character_SingleImage = []DB_Character_SingleImage{}
 	rows, err := conn.Query(`
-			SELECT c.Id, c.Name,
-				  (
-					SELECT GROUP_CONCAT(i.Url, '://:')
-					FROM Images i
-					LEFT JOIN Character_Images ci ON ci.Image_ID = i.Id
-					WHERE ci.Character_ID = c.Id AND ci.IsDefault = 1
-				  ) as Image,
-				  (
+			SELECT c.Id, c.Name, i.Url as Image,
+				(
 					SELECT GROUP_CONCAT(d.Description, '\n')
 					FROM Descriptions d
 					WHERE d.Character_ID = c.Id
-				  ) as Description
+				) as Description
 			FROM Character c
+			LEFT JOIN Images i ON c.Image_ID = i.Id
 			LEFT JOIN Anime_Characters ac ON ac.Character_ID = c.Id
 			WHERE ac.Anime_ID = ?;
 		`, id)
@@ -102,16 +92,16 @@ func SelectCharactersByIdWithDefaultImage(id string) ([]DB_Character_MultipleIma
 		if err = rows.Scan(&d.Id, &d.Name, &d.Image, &d.Description); err != nil {
 			return nil, err
 		}
-		var instance DB_Character_MultipleImages = DB_Character_MultipleImages{
+		var instance DB_Character_SingleImage = DB_Character_SingleImage{
 			Id:          d.Id,
 			Name:        d.Name,
-			Image:       strings.Split(d.Image.String, "://:"),
+			Image:       d.Image,
 			Description: d.Description,
 		}
-		if len(d.Image.String) == 0 {
-			alternativeImages, _ := selectCharacterAlternativeImages(tx, instance.Id)
-			instance.Image = alternativeImages
-		}
+		// if len(d.Image.String) == 0 {
+		// 	alternativeImages, _ := selectCharacterAlternativeImages(tx, instance.Id)
+		// 	instance.Image = alternativeImages
+		// }
 		data = append(data, instance)
 	}
 	tx.Commit()

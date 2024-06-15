@@ -1,31 +1,16 @@
 package db
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
 )
 
-func UpdateAnimeImage_RemoveIsDefault(tx *sqlx.Tx, anime_id string) {
-	var query string = "UPDATE Anime_Images SET IsDefault = 0 WHERE IsDefault = 1 AND Anime_ID = ?"
-	tx.MustExec(query, anime_id)
-}
-
 func UpdateAnimeImage_IsDefault(tx *sqlx.Tx, anime_id string, image_id string, is_default bool) {
 	var queries []string = []string{
-		` UPDATE Anime_Images
-			SET IsDefault = 1
-			WHERE Anime_ID = ? AND
-				  Image_ID = ? `,
-
-		` UPDATE Anime_Images
-			SET IsDefault = 1
-			WHERE Anime_ID = ? AND
-				  Image_ID = (
-						SELECT i.Id
-						FROM Images i
-						WHERE i.Url = ?
-					) `,
+		`UPDATE Anime SET Image_Id = ? WHERE Id = ?`,
+		`UPDATE Anime SET Image_Id = (SELECT i.Id FROM Images i WHERE i.Url = ?) WHERE Id = ?`,
 	}
 
 	var isUrl bool = strings.HasPrefix(image_id, "http")
@@ -38,10 +23,16 @@ func UpdateAnimeImage_IsDefault(tx *sqlx.Tx, anime_id string, image_id string, i
 	}
 
 	if len(anime_id) > 0 && len(image_id) > 0 {
-		tx.MustExec(
+		res := tx.MustExec(
 			queries[queryIndex],
 			anime_id,
 			image_id,
 		)
+		raff, err := res.RowsAffected()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("Update anime: ", fmt.Sprint(raff))
+
 	}
 }
