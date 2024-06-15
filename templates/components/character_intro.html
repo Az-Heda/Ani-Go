@@ -1,8 +1,10 @@
 {{ define "components/character_intro" }}
 
+{{ if $.character.Image.Valid }}
 <div class="relative w-full text-center pt-4 pb-8">
-	<img src="{{ index $.character.Image 0 }}" class="mx-auto max-w-80 rounded-lg">
+	<img src="{{ $.character.Image.String }}" class="mx-auto max-w-80 rounded-lg">
 </div>
+{{ end }}
 
 <a name="description" class="divider text-2xl w-3/4 relative left-1/2 -translate-x-1/2">Description</a>
 <div class="pt-4 pb-8 px-4 mx-auto max-w-screen-3xl text-center lg:pb-16 lg:pt-8">
