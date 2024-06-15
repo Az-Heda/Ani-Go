@@ -11,25 +11,26 @@ import (
 func serveAnime(c *gin.Context) {
 	var animeID string = c.Param("id")
 
-	var outImages []db.DB_Image
-
 	anime, err := db.SelectAnimeFromId(animeID)
 	checkPanic(err)
 
-	if anime.Image.Valid {
-		for _, img := range strings.Split(anime.Image.String, "://:") {
-			queryResult, err := db.SelectImageIdFromUrl(img)
-			if err == nil {
-				outImages = append(outImages, queryResult)
-			}
-		}
-	}
+	images, err := db.SelectImagesFromAnimeId(animeID)
+	checkPanic(err)
+
+	// if anime.Image.Valid {
+	// 	for _, img := range strings.Split(anime.Image.String, "://:") {
+	// 		queryResult, err := db.SelectImageIdFromUrl(img)
+	// 		if err == nil {
+	// 			outImages = append(outImages, queryResult)
+	// 		}
+	// 	}
+	// }
 
 	var title string
 	if title = anime.Title; anime.AlternativeTitle.Valid {
 		title = anime.AlternativeTitle.String
 	}
-	
+
 	var descr []string = []string{}
 	if anime.Description.Valid {
 		descr = strings.Split(anime.Description.String, "\\n")
@@ -52,7 +53,7 @@ func serveAnime(c *gin.Context) {
 		"menu":           navbar,
 		"activeMenuItem": "",
 		"anime":          anime,
-		"images":         outImages,
+		"images":         images,
 		"genres":         genres,
 		"themes":         themes,
 		"episodes":       episodes,
