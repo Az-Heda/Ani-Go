@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/jmoiron/sqlx"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var DatabaseName string = "db/db.sqlite3"

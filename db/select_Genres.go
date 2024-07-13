@@ -5,6 +5,12 @@ type DB_Genre struct {
 	Name string
 }
 
+type DB_GenreCount struct {
+	Id    string
+	Name  string
+	Count int
+}
+
 func SelectAllGenres() ([]DB_Genre, error) {
 	conn, err := GetConnection()
 	if err != nil {
@@ -19,6 +25,33 @@ func SelectAllGenres() ([]DB_Genre, error) {
 		var d DB_Genre
 		if err = rows.Scan(&d.Id, &d.Name); err != nil {
 			return data, err
+		}
+		data = append(data, d)
+	}
+	return data, nil
+}
+
+func SelectAllGenresWithCount() ([]DB_GenreCount, error) {
+	conn, err := GetConnection()
+	if err != nil {
+		return nil, err
+	}
+	var data []DB_GenreCount
+	rows, err := conn.Query(`
+		SELECT g.Id, g.Name, COUNT(*) AS "Count"
+		FROM Genres g 
+		LEFT JOIN Anime_Genres ag ON g.Id = ag.Genre_ID
+		LEFT JOIN Anime a ON a.Id = ag.Anime_ID
+		GROUP BY g.Id
+		ORDER BY g.Name
+	`)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var d DB_GenreCount
+		if err = rows.Scan(&d.Id, &d.Name, &d.Count); err != nil {
+			return nil, err
 		}
 		data = append(data, d)
 	}

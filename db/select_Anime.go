@@ -70,6 +70,110 @@ func SelectAllAnime() ([]DB_Anime, error) {
 	return data, nil
 }
 
+func SelectAllAnimeFromGenreID(genre DB_Genre) ([]DB_Anime, error) {
+	conn, err := GetConnection()
+	if err != nil {
+		return nil, err
+	}
+	var data []DB_Anime
+	rows, err := conn.Query(`
+		SELECT
+			a.Id, a.Title, a.AlternativeTitle,
+			a.Aired, a.Duration, a.Url,
+			a.CurrentStatus, a.Season_ID,
+			a.Type_ID, a.Broadcast, i.Url as Image,
+			(
+				SELECT GROUP_CONCAT(d.Description, '\n')
+				FROM Descriptions d
+				WHERE d.Anime_ID = a.Id
+			) as Description
+		FROM Anime a
+		LEFT JOIN Images i ON a.Image_Id = I.Id
+		LEFT JOIN Anime_Genres ag on a.Id = ag.Anime_ID
+		LEFT JOIN Genres g on g.Id = ag.Genre_ID
+		WHERE g.Id = ?
+		GROUP BY a.Id
+		ORDER BY
+		CASE WHEN AlternativeTitle IS NOT NULL
+			THEN AlternativeTitle
+			ELSE Title
+		END
+	`, genre.Id)
+	if err != nil {
+		return data, err
+	}
+	for rows.Next() {
+		var d DB_Anime
+		if err = rows.Scan(&d.Id, &d.Title, &d.AlternativeTitle, &d.Aired, &d.Duration, &d.Url, &d.CurrentStatus, &d.Season_ID, &d.Type_ID, &d.Broadcast, &d.Image, &d.Description); err != nil {
+			return data, err
+		}
+
+		if len(d.Image.String) == 0 {
+			images, _ := SelectAnimeAlternativeImages(d.Id, true)
+			if len(images) > 0 {
+				d.Image = sql.NullString{
+					String: images[0],
+					Valid:  len(images[0]) > 0,
+				}
+			}
+		}
+		data = append(data, d)
+	}
+	return data, nil
+}
+
+func SelectAllAnimeFromThemeID(theme DB_Theme) ([]DB_Anime, error) {
+	conn, err := GetConnection()
+	if err != nil {
+		return nil, err
+	}
+	var data []DB_Anime
+	rows, err := conn.Query(`
+		SELECT
+			a.Id, a.Title, a.AlternativeTitle,
+			a.Aired, a.Duration, a.Url,
+			a.CurrentStatus, a.Season_ID,
+			a.Type_ID, a.Broadcast, i.Url as Image,
+			(
+				SELECT GROUP_CONCAT(d.Description, '\n')
+				FROM Descriptions d
+				WHERE d.Anime_ID = a.Id
+			) as Description
+		FROM Anime a
+		LEFT JOIN Images i ON a.Image_Id = I.Id
+		LEFT JOIN Anime_Themes at on a.Id = at.Anime_ID
+		LEFT JOIN Themes t on t.Id = at.Theme_ID
+		WHERE t.Id = ?
+		GROUP BY a.Id
+		ORDER BY
+		CASE WHEN AlternativeTitle IS NOT NULL
+			THEN AlternativeTitle
+			ELSE Title
+		END
+	`, theme.Id)
+	if err != nil {
+		return data, err
+	}
+	for rows.Next() {
+		var d DB_Anime
+		if err = rows.Scan(&d.Id, &d.Title, &d.AlternativeTitle, &d.Aired, &d.Duration, &d.Url, &d.CurrentStatus, &d.Season_ID, &d.Type_ID, &d.Broadcast, &d.Image, &d.Description); err != nil {
+			return data, err
+		}
+
+		if len(d.Image.String) == 0 {
+			images, _ := SelectAnimeAlternativeImages(d.Id, true)
+			if len(images) > 0 {
+				d.Image = sql.NullString{
+					String: images[0],
+					Valid:  len(images[0]) > 0,
+				}
+			}
+		}
+		data = append(data, d)
+	}
+	return data, nil
+}
+
 func SelectAnimeFromId(id string) (DB_Anime, error) {
 	conn, err := GetConnection()
 	if err != nil {
