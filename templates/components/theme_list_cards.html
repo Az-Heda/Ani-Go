@@ -1,0 +1,47 @@
+{{ define "components/theme_list_cards" }}
+<div class="container flex flex-wrap justify-center items-stretched gap-10 mt-10 mx-auto">
+	{{ range $idx, $anime := $.animeList }}
+	<div class="w-72 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col justify-stretch transition-all duration-1000"
+		data-title="{{ if $anime.AlternativeTitle.Valid }} {{ $anime.AlternativeTitle.String }} {{else}} {{ $anime.Title }} {{ end }}"
+		data-animeidx="{{ $idx }}">
+		{{ if $anime.Image.Valid }}
+		<a href="/anime/{{ $anime.Id }}">
+
+			<div class="relative overflow-hidden">
+				<!-- <img src="https://www.w3schools.com/howto/img_avatar2.png" alt="Avatar" class="object-cover w-full h-full" /> -->
+				<img class="rounded-t-lg w-[300px] max-h-[400px]" src="{{ $anime.Image.String }}" alt="" loading="lazy" fetchPriority="low" />
+				<div class="absolute w-full py-2.5 top-0 inset-x-0 bg-black/75 text-white text-md text-center leading-4">
+					{{ range $idx, $status := $.statuses }}
+						{{ if eq $anime.CurrentStatus $status.Id }}
+							{{ $status.Name }}
+						{{ end }}
+					{{ end }}
+				</div>
+			  </div>
+			  
+
+			<!-- <span class="relative top-0 left-0">sai</span> -->
+		</a>
+		{{ end }}
+		<div class="p-5 h-full flex flex-col justify-between">
+			<h5 >
+				<a href="/anime/{{ $anime.Id }}" class="mb-2 text-xl font-bold text-gray-900 dark:text-white">
+					{{ if $anime.AlternativeTitle.Valid }}
+					{{ $anime.AlternativeTitle.String }}
+					{{ else }}
+					{{ $anime.Title }}
+					{{ end}}
+				</a>
+			</h5>
+			<div>
+				<span id="anime-${idx}-full-description" class="hidden">${{ $anime.Description.String }}</span>
+				<p
+					class="mb-3 font-normal text-gray-700 dark:text-gray-400 text-balance whitespace-nowrap truncate max-h-48">
+					{{ $anime.Description.String }}
+				</p>
+			</div>
+		</div>
+	</div>
+	{{ end }}
+</div>
+{{ end }}

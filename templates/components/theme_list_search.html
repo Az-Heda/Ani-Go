@@ -1,0 +1,77 @@
+{{ define "components/theme_list_search" }}
+<section class="bg-gray-50 dark:bg-gray-900">
+	<div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 grid lg:grid-cols-2 gap-8 lg:gap-16">
+		<div class="flex flex-col justify-center">
+			<h1
+				class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+				#{{ $.theme.Name }}
+			</h1>
+			<p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
+				Explore all of the {{ len $.animeList }} {{ $.theme.Name }} anime
+			</p>
+		</div>
+		<div>
+			<div class="w-full lg:max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow-xl dark:bg-gray-800">
+				<h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+					Advance Search
+				</h2>
+				<div class=" grid gap-6 mb-6 grid-cols-1 lg:grid-cols-1 md:grid-cols-1" action="#">
+					<div class="relative z-0">
+						<input type="text" id="search-by-title"
+							class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+							placeholder=" " />
+						<label for="search-by-title"
+							class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+							Search by name
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	window.addEventListener('load', _ => {
+		let items = [...document.querySelectorAll('[data-title]')];
+		const autoHiddenItems = [ ...document.querySelectorAll('[data-autohidden="1"]')];
+		const filterByTitle = document.querySelector('#search-by-title');
+		
+		const hideClass = 'hidden';
+
+		for (const ahi of autoHiddenItems) {
+			if (!ahi.classList.contains(hideClass)) {
+				ahi.classList.add(hideClass);
+			}
+		}
+
+		const cb = (item) => {
+			let conditions = [true];
+
+			let title = item?.dataset?.title?.toLowerCase()?.replace(/[^a-z0-9 ]/g, '');
+			let val = filterByTitle?.value?.toLowerCase()?.replace(/[^a-z0-9 ]/g, '');
+			if (filterByTitle.value.length > 0) conditions.push(title.includes(val));
+
+			return conditions.every(Boolean);
+		}
+
+		const applyFilter = _ => {
+			for (const item of items) {
+				if (cb(item)) {
+					if (item.classList.contains(hideClass)) {
+						item.classList.remove(hideClass);
+					}
+				} else {
+					if (!item.classList.contains(hideClass)) {
+						item.classList.add(hideClass);
+					}
+				}
+			}
+			document.querySelector('#all-anime-count').innerHTML = items.length;
+			document.querySelector('#filtered-anime-count').innerHTML = document.querySelectorAll('[data-title]:not(.hidden)').length;
+		}
+		
+		filterByTitle.addEventListener('keyup', applyFilter);
+	});
+</script>
+{{ end }}
