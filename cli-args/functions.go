@@ -25,10 +25,6 @@ func initializeDB(ec int) {
 	os.Exit(ec)
 }
 
-func scrape(url string) {
-	scraper.Init(url)
-}
-
 func importFile(ec int, _ []string) {
 	content, err := os.ReadFile("import.txt")
 	if err != nil {
@@ -40,22 +36,6 @@ func importFile(ec int, _ []string) {
 	if err != nil {
 		panic(err)
 	}
-
-	// conn.MustExec(`
-	// 	DELETE FROM Anime
-	// 	WHERE Id = (
-	// 		SELECT Id
-	// 		FROM Anime
-	// 		ORDER BY ROWID DESC
-	// 		LIMIT 1
-	// 	)`)
-
-	// dbInitializer, err := os.ReadFile("./db/db-setup-v2.sql")
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
-	// var queryInitializer string = string(dbInitializer)
-	// conn.MustExec(queryInitializer)
 
 	var rows []string = strings.Split(string(content), "\n")
 
