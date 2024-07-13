@@ -22,9 +22,10 @@ type ScraperDescription struct {
 }
 
 type ScraperCharacter struct {
-	Id   string
-	Name string
-	Url  string
+	Id    string
+	Name  string
+	Url   string
+	Image ScraperImage
 }
 
 type ScraperEpisode struct {
@@ -115,3 +116,42 @@ type ScraperCharacterImage struct {
 // 	Episode_ID     string
 // 	Description_ID string
 // }
+
+type ScrapedAnime struct {
+	Anime            ScraperAnime
+	AnimeSeason      ScraperSeason
+	AnimeType        ScraperTypes
+	AnimeDescription []ScraperDescription
+	AnimeStudios     []ScraperStudio
+	AnimeGenre       []ScraperGenre
+	AnimeTheme       []ScraperTheme
+
+	Join_Anime_Studio []ScraperAnimeStudio
+	Join_Anime_Genre  []ScraperAnimeGenre
+	Join_Anime_Theme  []ScraperAnimeTheme
+}
+
+type ScrapedAnimePics struct {
+	AnimeImages       []ScraperImage
+	Join_Anime_Images []ScraperAnimeImage
+}
+
+type ScrapedAnimeCharacters struct {
+	AnimeCharacters       []ScraperCharacter
+	AnimeDescriptions     []ScraperDescription
+	CharacterImages       []ScraperImage
+	Join_Character_Image  []ScraperCharacterImage
+	Join_Anime_Characters []ScraperAnimeCharacter
+}
+
+type ScrapedAnimeEpisodes struct {
+	AnimeEpisodes     []ScraperEpisode
+	AnimeDescriptions []ScraperDescription
+}
+
+type ScrapedAll struct {
+	ScrapedAnime           ScrapedAnime
+	ScrapedAnimePics       ScrapedAnimePics
+	ScrapedAnimeCharacters ScrapedAnimeCharacters
+	ScrapedAnimeEpisodes   ScrapedAnimeEpisodes
+}

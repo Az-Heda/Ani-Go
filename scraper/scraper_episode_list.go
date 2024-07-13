@@ -9,8 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func parseAnimeEpisodeList(baseUrl string, url string, conn *sqlx.DB, tx *sqlx.Tx) {
-	var animeID = GetAnimeID(conn, baseUrl)
+func parseAnimeEpisodeList(animeID string, url string, conn *sqlx.DB, tx *sqlx.Tx) (ScrapedAnimeEpisodes, bool) {
 	var episodes []ScraperEpisode
 	var descriptions []ScraperDescription
 
@@ -67,6 +66,10 @@ func parseAnimeEpisodeList(baseUrl string, url string, conn *sqlx.DB, tx *sqlx.T
 
 	collector.Visit(url)
 
-	insertEpisode(conn, tx, episodes)
-	insertEpisodeDescription(conn, tx, descriptions)
+	// insertEpisode(conn, tx, episodes)
+	// insertEpisodeDescription(conn, tx, descriptions)
+	return ScrapedAnimeEpisodes{
+		AnimeEpisodes:     episodes,
+		AnimeDescriptions: descriptions,
+	}, true
 }

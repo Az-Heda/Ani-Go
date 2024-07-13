@@ -135,11 +135,12 @@ func ExistAnimeDescriptionID(conn *sqlx.DB, animeID string, descr string) string
 	return ""
 }
 func GetAnimeDescriptionID(conn *sqlx.DB, animeID string, descr string) string {
-	var id string = ExistAnimeDescriptionID(conn, animeID, descr)
-	if len(id) == 0 {
-		return generateID()
-	}
-	return id
+	return generateID()
+	// var id string = ExistAnimeDescriptionID(conn, animeID, descr)
+	// if len(id) == 0 {
+	// 	return generateID()
+	// }
+	// return id
 }
 
 func ExistEpisodeDescriptionID(conn *sqlx.DB, episodeID string, descr string) string {
@@ -155,11 +156,12 @@ func ExistEpisodeDescriptionID(conn *sqlx.DB, episodeID string, descr string) st
 	return ""
 }
 func GetEpisodeDescriptionID(conn *sqlx.DB, episodeID string, descr string) string {
-	var id string = ExistEpisodeDescriptionID(conn, episodeID, descr)
-	if len(id) == 0 {
-		return generateID()
-	}
-	return id
+	return generateID()
+	// var id string = ExistEpisodeDescriptionID(conn, episodeID, descr)
+	// if len(id) == 0 {
+	// 	return generateID()
+	// }
+	// return id
 }
 
 func ExistCharacterDescriptionID(conn *sqlx.DB, characterID string, descr string) string {
@@ -175,11 +177,12 @@ func ExistCharacterDescriptionID(conn *sqlx.DB, characterID string, descr string
 	return ""
 }
 func GetCharacterDescriptionID(conn *sqlx.DB, characterID string, descr string) string {
-	var id string = ExistCharacterDescriptionID(conn, characterID, descr)
-	if len(id) == 0 {
-		return generateID()
-	}
-	return id
+	return generateID()
+	// var id string = ExistCharacterDescriptionID(conn, characterID, descr)
+	// if len(id) == 0 {
+	// 	return generateID()
+	// }
+	// return id
 }
 
 func ExistImageID(conn *sqlx.DB, url string) string {
@@ -258,10 +261,10 @@ func GetEpisodeID(conn *sqlx.DB, animeID string, episodeNumber int) string {
 	return id
 }
 
-func insertAnime(conn *sqlx.DB, tx *sqlx.Tx, data ScraperAnime) {
+func insertAnime(conn *sqlx.DB, tx *sqlx.Tx, data ScraperAnime, image ScraperImage) {
 	tx.MustExec(`
-		INSERT INTO Anime (Id, Title, AlternativeTitle, Aired, Duration, Url, Broadcast, Season_ID, Type_ID, CurrentStatus)
-		SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+		INSERT INTO Anime (Id, Title, AlternativeTitle, Aired, Duration, Url, Broadcast, Season_ID, Type_ID, Image_ID, CurrentStatus)
+		SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 		WHERE NOT EXISTS (
 			SELECT 1
 			FROM Anime
@@ -276,6 +279,7 @@ func insertAnime(conn *sqlx.DB, tx *sqlx.Tx, data ScraperAnime) {
 		data.Broadcast,
 		nullString(data.Season_ID),
 		nullString(data.Type_ID),
+		image.Id,
 		data.CurrentStatus,
 		data.Id,
 	)
@@ -319,8 +323,7 @@ func insertAnimeDescription(conn *sqlx.DB, tx *sqlx.Tx, data []ScraperDescriptio
 			WHERE NOT EXISTS (
 				SELECT 1
 				FROM Descriptions
-				WHERE Id = ? AND
-					  Anime_ID = ?
+				WHERE Id = ?
 			)`,
 			item.Id,
 			item.Description,
@@ -340,8 +343,7 @@ func insertEpisodeDescription(conn *sqlx.DB, tx *sqlx.Tx, data []ScraperDescript
 			WHERE NOT EXISTS (
 				SELECT 1
 				FROM Descriptions
-				WHERE Id = ? AND
-					  Episode_ID = ?
+				WHERE Id = ?
 			)`,
 			item.Id,
 			item.Description,
@@ -361,8 +363,7 @@ func insertCharacterDescription(conn *sqlx.DB, tx *sqlx.Tx, data []ScraperDescri
 			WHERE NOT EXISTS (
 				SELECT 1
 				FROM Descriptions
-				WHERE Id = ? AND
-					  Character_ID = ?
+				WHERE Id = ?
 			)`,
 			item.Id,
 			item.Description,
@@ -449,8 +450,8 @@ func insertEpisode(conn *sqlx.DB, tx *sqlx.Tx, data []ScraperEpisode) {
 func insertCharacter(conn *sqlx.DB, tx *sqlx.Tx, data []ScraperCharacter) {
 	for _, item := range data {
 		tx.MustExec(`
-			INSERT INTO Character (Id, Name, Url)
-			SELECT ?, ?, ?
+			INSERT INTO Character (Id, Name, Url, Image_ID)
+			SELECT ?, ?, ?, ?
 			WHERE NOT EXISTS (
 				SELECT 1
 				FROM Character
@@ -459,6 +460,7 @@ func insertCharacter(conn *sqlx.DB, tx *sqlx.Tx, data []ScraperCharacter) {
 			item.Id,
 			item.Name,
 			item.Url,
+			item.Image.Id,
 			item.Id,
 		)
 	}

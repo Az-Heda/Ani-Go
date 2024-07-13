@@ -9,7 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func parseAnimePage(url string, conn *sqlx.DB, tx *sqlx.Tx) {
+func parseAnimePage(url string, conn *sqlx.DB, tx *sqlx.Tx) (ScrapedAnime, bool) {
 	var anime ScraperAnime
 	var animeSeason ScraperSeason
 	var animeType ScraperTypes
@@ -140,15 +140,28 @@ func parseAnimePage(url string, conn *sqlx.DB, tx *sqlx.Tx) {
 	collector.Visit(url)
 
 	if len(anime.Id) > 0 {
-		insertType(conn, tx, animeType)
-		insertSeason(conn, tx, animeSeason)
-		insertAnimeDescription(conn, tx, animeDescription)
-		insertStudio(conn, tx, animeStudios)
-		insertGenre(conn, tx, animeGenres)
-		insertTheme(conn, tx, animeThemes)
-		insertAnime(conn, tx, anime)
-		insertAnimeStudio(conn, tx, join_anime_studios)
-		insertAnimeGenre(conn, tx, join_anime_genre)
-		insertAnimeTheme(conn, tx, join_anime_theme)
+		// insertType(conn, tx, animeType)
+		// insertSeason(conn, tx, animeSeason)
+		// insertAnimeDescription(conn, tx, animeDescription)
+		// insertStudio(conn, tx, animeStudios)
+		// insertGenre(conn, tx, animeGenres)
+		// insertTheme(conn, tx, animeThemes)
+		// insertAnime(conn, tx, anime)
+		// insertAnimeStudio(conn, tx, join_anime_studios)
+		// insertAnimeGenre(conn, tx, join_anime_genre)
+		// insertAnimeTheme(conn, tx, join_anime_theme)
+		return ScrapedAnime{
+			Anime:             anime,
+			AnimeSeason:       animeSeason,
+			AnimeType:         animeType,
+			AnimeDescription:  animeDescription,
+			AnimeStudios:      animeStudios,
+			AnimeGenre:        animeGenres,
+			AnimeTheme:        animeThemes,
+			Join_Anime_Studio: join_anime_studios,
+			Join_Anime_Genre:  join_anime_genre,
+			Join_Anime_Theme:  join_anime_theme,
+		}, true
 	}
+	return ScrapedAnime{}, false
 }

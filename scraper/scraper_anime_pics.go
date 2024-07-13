@@ -7,8 +7,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func parseAnimePics(baseUrl string, url string, conn *sqlx.DB, tx *sqlx.Tx) {
-	var animeID string = GetAnimeID(conn, baseUrl)
+func parseAnimePics(animeID string, url string, conn *sqlx.DB, tx *sqlx.Tx) (ScrapedAnimePics, bool) {
 	var images []ScraperImage
 	var join_anime_images []ScraperAnimeImage
 
@@ -30,6 +29,10 @@ func parseAnimePics(baseUrl string, url string, conn *sqlx.DB, tx *sqlx.Tx) {
 
 	collector.Visit(url)
 
-	insertImage(conn, tx, images)
-	insertAnimeImage(conn, tx, join_anime_images)
+	// insertImage(conn, tx, images)
+	// insertAnimeImage(conn, tx, join_anime_images)
+	return ScrapedAnimePics{
+		AnimeImages:       images,
+		Join_Anime_Images: join_anime_images,
+	}, true
 }
