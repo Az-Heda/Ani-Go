@@ -1,7 +1,7 @@
 {{ define "components/anime_characters" }}
 {{ if $.characters }}
-<a name="characters" class="divider text-2xl w-3/4 relative left-1/2 -translate-x-1/2">Characters</a>
-<section class="flex flex-wrap gap-3 justify-center pt-8 pb-16">
+<a name="characters" class="divider text-2xl container relative left-1/2 -translate-x-1/2">Characters</a>
+<section class="container flex flex-wrap gap-3 justify-center pt-8 pb-16 mx-auto">
 	{{ range $idx, $character := $.characters }}
 	<a href="/character/{{ $character.Id }}" class="rounded-t-lg w-48 lg:max-w-60 2xl:max-w-80" title="{{ $character.Name }}">
 		{{ if index $character.Image.Valid }}
