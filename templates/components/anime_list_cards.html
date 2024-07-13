@@ -1,5 +1,5 @@
 {{ define "components/anime_list_cards" }}
-<div class="flex flex-wrap justify-center items-stretched gap-10 mt-10">
+<div class="container flex flex-wrap justify-center items-stretched gap-10 mt-10 mx-auto">
 	{{ range $idx, $anime := $.animeList }}
 	<div class="w-72 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col justify-stretch transition-all duration-1000"
 		data-title="{{ if $anime.AlternativeTitle.Valid }} {{ $anime.AlternativeTitle.String }} {{else}} {{ $anime.Title }} {{ end }}"
