@@ -8,6 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type broadcastDay struct {
+	Id   int
+	Name string
+}
+
 func serveAnime(c *gin.Context) {
 	var animeID string = c.Param("id")
 
@@ -17,14 +22,11 @@ func serveAnime(c *gin.Context) {
 	images, err := db.SelectImagesFromAnimeId(animeID)
 	checkPanic(err)
 
-	// if anime.Image.Valid {
-	// 	for _, img := range strings.Split(anime.Image.String, "://:") {
-	// 		queryResult, err := db.SelectImageIdFromUrl(img)
-	// 		if err == nil {
-	// 			outImages = append(outImages, queryResult)
-	// 		}
-	// 	}
-	// }
+	allStatus, err := db.SelectAllStatuses()
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	var title string
 	if title = anime.Title; anime.AlternativeTitle.Valid {
@@ -59,5 +61,16 @@ func serveAnime(c *gin.Context) {
 		"episodes":       episodes,
 		"characters":     characters,
 		"description":    descr,
+		"statusList":     allStatus,
+		"broadcastDays": []broadcastDay{
+			{Id: 1, Name: "Monday"},
+			{Id: 2, Name: "Tuesday"},
+			{Id: 3, Name: "Wednesday"},
+			{Id: 4, Name: "Thursday"},
+			{Id: 5, Name: "Friday"},
+			{Id: 6, Name: "Saturday"},
+			{Id: 0, Name: "Sunday"},
+			{Id: -1, Name: "Unknown"},
+		},
 	})
 }

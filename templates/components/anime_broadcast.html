@@ -1,0 +1,54 @@
+{{ define "components/anime_broadcast" }}
+
+<div class="container flex flex-wrap justify-center mx-auto gap-5 *:mt-5 *:w-72 ">
+
+	<form>
+		<label for="status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+			Status
+		</label>
+		<select id="status"
+			class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+			data-animeid="{{ $.anime.Id }}" autocomplete="off" onchange="changeStatus(this)">
+			{{ range $status := $.statusList }}
+			<option value="{{ $status.Id }}" {{ if eq $status.Id $.anime.CurrentStatus}} selected {{ end }}>
+				{{ $status.Name }}
+			</option>
+			{{ end }}
+		</select>
+	</form>
+
+	<form>
+		<label for="broadcast" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+			Braodcast day
+		</label>
+		<select id="broadcast"
+			class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+			data-animeid="{{ $.anime.Id }}" autocomplete="off" onchange="changeBroadcastDay(this)">
+			{{ range $broadcast := $.broadcastDays }}
+			<option value="{{ $broadcast.Id }}" {{ if eq $broadcast.Id $.anime.Broadcast}} selected {{ end }}>{{
+				$broadcast.Name }}
+			</option>
+			{{ end }}
+		</select>
+	</form>
+	
+</div>
+
+<script>
+	async function changeBroadcastDay(select) {
+		const animeID = select.dataset.animeid;
+		const url = '/api/broadcast/:anime/:broadcast'.replace(':broadcast', select.value).replace(':anime', animeID);
+		const res = await fetch(url, { method: 'PATCH' });
+		console.log(res.status)
+	}
+
+	async function changeStatus(select) {
+		const animeID = select.dataset.animeid;
+		const url = '/api/status/:anime/:status'.replace(':status', select.value).replace(':anime', animeID);
+		console.log(url);
+		const res = await fetch(url, { method: 'PATCH' });
+		console.log(res.status)
+	}
+</script>
+
+{{ end }}
