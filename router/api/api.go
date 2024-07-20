@@ -17,4 +17,5 @@ func Init(eng *gin.Engine) {
 	SetCharacterEndpoints(api)
 	SetAnimeEndpoints(api)
 	SetIsDefaultEndpoints(api)
+	SetBroadcastEndpoints(api)
 }
