@@ -3,9 +3,11 @@
 <div class="container mx-auto pt-8">
 	<div class="flex flex-wrap justify-center items-center gap-8">
 		{{ range $idx, $genre := $.genreList }}
-		<div class="p-4 text-center">
+		<div class="p-4 text-center bg-gray-800 rounded-xl">
 			<a href="/genre/{{ $genre.Id }}" class="capitalize transition-colors duration-300 hover:text-blue-500 text-xl">
-				{{ $genre.Name }}
+				<span class="text-blue-500 text-3xl font-bold font-sans">
+					{{ $genre.Name }}
+				</span><br/>
 				({{ $genre.Count }})
 			</a>
 		</div>
