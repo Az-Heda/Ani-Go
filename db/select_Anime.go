@@ -19,6 +19,10 @@ type DB_Anime struct {
 	Type_ID          sql.NullString
 	Image            sql.NullString
 	Description      sql.NullString
+	Status           struct {
+		Name      string
+		IsVisible int
+	}
 }
 
 func SelectAllAnime() ([]DB_Anime, error) {
@@ -37,9 +41,12 @@ func SelectAllAnime() ([]DB_Anime, error) {
 				SELECT GROUP_CONCAT(d.Description, '\n')
 				FROM Descriptions d
 				WHERE d.Anime_ID = a.Id
-			) as Description
+			) as Description,
+			s.isVisible,
+			s.Name as StatusName
 		FROM Anime a
 		LEFT JOIN Images i ON a.Image_Id = I.Id
+		LEFT JOIN Statuses s ON s.Id = A.CurrentStatus
 		GROUP BY a.Id
 		ORDER BY
 		CASE WHEN AlternativeTitle IS NOT NULL
@@ -52,7 +59,7 @@ func SelectAllAnime() ([]DB_Anime, error) {
 	}
 	for rows.Next() {
 		var d DB_Anime
-		if err = rows.Scan(&d.Id, &d.Title, &d.AlternativeTitle, &d.Aired, &d.Duration, &d.Url, &d.CurrentStatus, &d.Season_ID, &d.Type_ID, &d.Broadcast, &d.Image, &d.Description); err != nil {
+		if err = rows.Scan(&d.Id, &d.Title, &d.AlternativeTitle, &d.Aired, &d.Duration, &d.Url, &d.CurrentStatus, &d.Season_ID, &d.Type_ID, &d.Broadcast, &d.Image, &d.Description, &d.Status.IsVisible, &d.Status.Name); err != nil {
 			return data, err
 		}
 
@@ -210,6 +217,31 @@ func SelectAnimeFromId(id string) (DB_Anime, error) {
 		}
 	}
 	return data, nil
+}
+
+func SelectRandomAnime() (DB_Anime, error) {
+	conn, err := GetConnection()
+	if err != nil {
+		return DB_Anime{}, err
+	}
+	var randomID string = ""
+	rows, err := conn.Query(`
+		SELECT a.Id 
+		FROM Anime a
+		LEFT JOIN Statuses s ON s.Id = a.CurrentStatus
+		WHERE s.IsVisible = 1
+		ORDER BY RANDOM() LIMIT 1
+	`)
+	if err != nil {
+		return DB_Anime{}, err
+	}
+	for rows.Next() {
+		if err = rows.Scan(&randomID); err != nil {
+			return DB_Anime{}, err
+		}
+	}
+
+	return SelectAnimeFromId(randomID)
 }
 
 func SelectAnimeFromPartName(name string) ([]DB_Anime, error) {
