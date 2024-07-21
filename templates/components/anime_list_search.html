@@ -63,6 +63,7 @@
 				ahi.classList.add(hideClass);
 			}
 		}
+		document.querySelector('#filtered-anime-count').innerHTML = document.querySelectorAll('[data-title]:not(.hidden)').length;
 
 		const cb = (item) => {
 			let conditions = [true];

@@ -3,7 +3,7 @@
 	{{ range $idx, $anime := $.animeList }}
 	<div class="w-72 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col justify-stretch transition-all duration-1000"
 		data-title="{{ if $anime.AlternativeTitle.Valid }} {{ $anime.AlternativeTitle.String }} {{else}} {{ $anime.Title }} {{ end }}"
-		data-animeidx="{{ $idx }}" {{ if lt $anime.CurrentStatus 5 }} data-autohidden="0" {{ else }} data-autohidden="1"
+		data-animeidx="{{ $idx }}" {{ if eq $anime.Status.IsVisible 1 }} data-autohidden="0" {{ else }} data-autohidden="1"
 		{{ end }}>
 		{{ if $anime.Image.Valid }}
 		<a href="/anime/{{ $anime.Id }}">
