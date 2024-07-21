@@ -11,6 +11,7 @@ var navbar [][]string = [][]string{
 	{"Anime list", "/list/anime"},
 	{"Genre list", "/list/genres"},
 	{"Theme list", "/list/themes"},
+	{"Random anime", "/random-anime"},
 	// {"Dashboard", "/dashboard"},
 }
 
@@ -30,4 +31,5 @@ func Init(r *gin.Engine) {
 	r.GET("/character/:id", serveCharacter)
 	r.GET("/genre/:id", serveGenre)
 	r.GET("/theme/:id", serveTheme)
+	r.GET("/random-anime", serveRandomAnime)
 }
