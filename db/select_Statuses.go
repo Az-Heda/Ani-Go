@@ -1,8 +1,9 @@
 package db
 
 type DB_Status struct {
-	Id   int
-	Name string
+	Id        int
+	Name      string
+	IsVisible int
 }
 
 func SelectAllStatuses() ([]DB_Status, error) {
@@ -11,13 +12,13 @@ func SelectAllStatuses() ([]DB_Status, error) {
 		return nil, err
 	}
 	var data []DB_Status
-	rows, err := conn.Query("SELECT Id, Name FROM Statuses ORDER BY Id ASC")
+	rows, err := conn.Query("SELECT Id, Name, IsVisible FROM Statuses ORDER BY Id ASC")
 	if err != nil {
 		return data, err
 	}
 	for rows.Next() {
 		var d DB_Status
-		if err = rows.Scan(&d.Id, &d.Name); err != nil {
+		if err = rows.Scan(&d.Id, &d.Name, &d.IsVisible); err != nil {
 			return data, err
 		}
 		data = append(data, d)
@@ -31,12 +32,12 @@ func SelectStatusFromId(id string) (DB_Status, error) {
 		return DB_Status{}, err
 	}
 	var data DB_Status
-	rows, err := conn.Query("SELECT Id, Name FROM Statuses WHERE Id = ?", id)
+	rows, err := conn.Query("SELECT Id, Name, IsVisible FROM Statuses WHERE Id = ?", id)
 	if err != nil {
 		return DB_Status{}, err
 	}
 	for rows.Next() {
-		if err = rows.Scan(&data.Id, &data.Name); err != nil {
+		if err = rows.Scan(&data.Id, &data.Name, &data.IsVisible); err != nil {
 			return DB_Status{}, err
 		}
 	}
@@ -49,12 +50,12 @@ func SelectStatusFromName(name string) (DB_Status, error) {
 		return DB_Status{}, err
 	}
 	var data DB_Status
-	rows, err := conn.Query("SELECT Id, Name FROM Statuses WHERE Name = ?", name)
+	rows, err := conn.Query("SELECT Id, Name, IsVisible FROM Statuses WHERE Name = ?", name)
 	if err != nil {
 		return DB_Status{}, err
 	}
 	for rows.Next() {
-		if err = rows.Scan(&data.Id, &data.Name); err != nil {
+		if err = rows.Scan(&data.Id, &data.Name, &data.IsVisible); err != nil {
 			return DB_Status{}, err
 		}
 	}
