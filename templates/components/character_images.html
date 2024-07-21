@@ -1,7 +1,7 @@
 {{ define "components/character_images" }}
 {{ if $.images }}
-<a name="gallery" class="divider text-2xl w-3/4 relative left-1/2 -translate-x-1/2">Gallery</a>
-<section class="flex flex-wrap gap-3 justify-center py-4 pb-16">
+<a name="gallery" class="divider text-2xl w-3/4 container relative left-1/2 -translate-x-1/2">Gallery</a>
+<section class="container flex flex-wrap gap-3 justify-center py-4 pb-16 mx-auto">
 	{{ range $idx, $img := $.images }}
 	<div class="rounded-t-lg max-w-48">
 		<img src="{{ $img.Url }}" class="hover:cursor-pointer" alt="" loading="lazy" fetchPriority="low"
