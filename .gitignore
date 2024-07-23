@@ -4,6 +4,7 @@ test/
 
 db-integration/migration/
 db-integration/data/
+db-integration
 
 *.exe
 *.sqlite3
